@@ -1,0 +1,125 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<div class="login-bg">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg width="50" height="50" viewBox="0 0 40 40" aria-hidden="true" class="login-svg">
+        <defs>
+          <linearGradient id="greenGradientSignUp" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#3cb371"/>
+            <stop offset="100%" stop-color="#51a2e3"/>
+          </linearGradient>
+        </defs>
+        <circle cx="20" cy="20" r="20" fill="url(#greenGradientSignUp)" />
+        <text x="50%" y="57%" text-anchor="middle" fill="#fff" font-size="1.6em" font-family="Inter, Arial, sans-serif" font-weight="bold" dy=".3em">G</text>
+      </svg>
+      <span class="login-brand">GreenPathAI</span>
+    </div>
+    <h2 class="login-title">Créer un compte client</h2>
+    <form [formGroup]="signupForm" (ngSubmit)="onSignUp()" autocomplete="on">
+      <!-- Nom complet -->
+      <div class="login-field" [class.login-error]="signupForm.get('fullName')?.invalid && signupForm.get('fullName')?.touched">
+        <label for="fullName" class="visually-hidden">Nom complet</label>
+        <span class="fa fa-user"></span>
+        <input
+          id="fullName"
+          type="text"
+          formControlName="fullName"
+          placeholder="Nom complet"
+          required
+          autocomplete="name"
+        >
+      </div>
+      <div class="login-error-message" *ngIf="signupForm.get('fullName')?.invalid && signupForm.get('fullName')?.touched">
+        Veuillez entrer votre nom complet.
+      </div>
+      <!-- Email -->
+      <div class="login-field" [class.login-error]="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
+        <label for="email" class="visually-hidden">Adresse e-mail</label>
+        <span class="fa fa-envelope"></span>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="Adresse e-mail"
+          required
+          autocomplete="email"
+        >
+      </div>
+      <div class="login-error-message" *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
+        Veuillez entrer une adresse e-mail valide.
+      </div>
+      <!-- Téléphone -->
+      <div class="login-field" [class.login-error]="signupForm.get('phone')?.invalid && signupForm.get('phone')?.touched">
+        <label for="phone" class="visually-hidden">Téléphone</label>
+        <span class="fa fa-phone"></span>
+        <input
+          id="phone"
+          type="tel"
+          formControlName="phone"
+          placeholder="Numéro de téléphone"
+          required
+          autocomplete="tel"
+        >
+      </div>
+      <div class="login-error-message" *ngIf="signupForm.get('phone')?.invalid && signupForm.get('phone')?.touched">
+        Veuillez entrer un numéro de téléphone valide.
+      </div>
+
+      <!-- Mot de passe -->
+      <div class="login-field password-field" [class.login-error]="signupForm.get('password')?.invalid && signupForm.get('password')?.touched">
+        <label for="password" class="visually-hidden">Mot de passe</label>
+        <span class="fa fa-lock"></span>
+        <input
+          id="password"
+          [type]="showPassword ? 'text' : 'password'"
+          formControlName="password"
+          placeholder="Mot de passe"
+          required
+          autocomplete="new-password"
+        >
+        <button type="button"
+                class="eye-btn"
+                (click)="togglePasswordVisibility()"
+                [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+          <span [ngClass]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></span>
+        </button>
+      </div>
+      <div class="login-error-message" *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched">
+        Le mot de passe doit contenir au moins 8 caractères.
+      </div>
+      <!-- Confirmation du mot de passe -->
+      <div class="login-field password-field"
+           [class.login-error]="
+             (signupForm.get('confirmPassword')?.invalid && signupForm.get('confirmPassword')?.touched)
+             || (signupForm.errors?.['passwordsMismatch'] && signupForm.get('confirmPassword')?.touched)
+           ">
+        <label for="confirmPassword" class="visually-hidden">Confirmer le mot de passe</label>
+        <span class="fa fa-lock"></span>
+        <input
+          id="confirmPassword"
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          formControlName="confirmPassword"
+          placeholder="Confirmer le mot de passe"
+          required
+          autocomplete="new-password"
+        >
+        <button type="button"
+                class="eye-btn"
+                (click)="toggleConfirmPasswordVisibility()"
+                [attr.aria-label]="showConfirmPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+          <span [ngClass]="showConfirmPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></span>
+        </button>
+      </div>
+      <div class="login-error-message" *ngIf="signupForm.get('confirmPassword')?.invalid && signupForm.get('confirmPassword')?.touched">
+        Veuillez confirmer votre mot de passe.
+      </div>
+      <div class="login-error-message" *ngIf="signupForm.errors?.['passwordsMismatch'] && signupForm.get('confirmPassword')?.touched">
+        Les mots de passe ne correspondent pas.
+      </div>
+      <button class="login-btn" type="submit" [disabled]="signupForm.invalid">Créer mon compte</button>
+    </form>
+    <div class="login-links">
+      <a href="/login">Déjà inscrit ? Se connecter</a>
+    </div>
+  </div>
+</div>

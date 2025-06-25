@@ -1,0 +1,65 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<div class="login-bg">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg width="50" height="50" viewBox="0 0 40 40" aria-hidden="true" class="login-svg">
+        <defs>
+          <linearGradient id="greenGradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#3cb371"/>
+            <stop offset="100%" stop-color="#51a2e3"/>
+          </linearGradient>
+        </defs>
+        <circle cx="20" cy="20" r="20" fill="url(#greenGradient)" />
+        <text x="50%" y="57%" text-anchor="middle" fill="#fff" font-size="1.6em" font-family="Inter, Arial, sans-serif" font-weight="bold" dy=".3em">G</text>
+      </svg>
+      <span class="login-brand">GreenPathAI</span>
+    </div>
+    <h2 class="login-title">Connexion à votre espace</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" autocomplete="on">
+      <div class="login-field" [class.login-error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+        <label for="email" class="visually-hidden">Adresse e-mail</label>
+        <span class="fa fa-envelope"></span>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="Adresse e-mail"
+          required
+          autocomplete="email"
+          [attr.aria-invalid]="loginForm.get('email')?.invalid ? true : null"
+        >
+      </div>
+      <div class="login-error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+        Veuillez entrer une adresse e-mail valide.
+      </div>
+      <div class="login-field password-field" [class.login-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+        <label for="password" class="visually-hidden">Mot de passe</label>
+        <span class="fa fa-lock"></span>
+        <input
+          id="password"
+          [type]="showPassword ? 'text' : 'password'"
+          formControlName="password"
+          placeholder="Mot de passe"
+          required
+          autocomplete="current-password"
+          [attr.aria-invalid]="loginForm.get('password')?.invalid ? true : null"
+        >
+        <button type="button"
+                class="eye-btn"
+                (click)="togglePasswordVisibility()"
+                [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+          <span [ngClass]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></span>
+        </button>
+      </div>
+      <div class="login-error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+        Le mot de passe est requis.
+      </div>
+      <button class="login-btn" type="submit" [disabled]="loginForm.invalid">Se connecter</button>
+    </form>
+    <div class="login-links">
+      <a routerLink="/forgot-password">Mot de passe oublié ?</a>
+      <span>&nbsp;|&nbsp;</span>
+      <a href="/signup">Créer un compte</a>
+    </div>
+  </div>
+</div>

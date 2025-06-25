@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GreenPathAI – Explorez le monde autrement</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,600,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<nav class="navbar fixed-navbar">
+  <div class="navbar-container">
+    <a class="navbar-brand" href="#"> <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
+      <defs>
+        <linearGradient id="greenGradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#3cb371"/>
+          <stop offset="100%" stop-color="#51a2e3"/>
+        </linearGradient>
+      </defs>
+      <circle cx="20" cy="20" r="20" fill="url(#greenGradient)" />
+      <text x="50%" y="57%" text-anchor="middle" fill="#fff" font-size="1.5em" font-family="Inter, Arial, sans-serif" font-weight="bold" dy=".3em">G</text>
+    </svg> GreenPathAI </a>
+    <ul class="navbar-menu">
+      <li><a href="#">Accueil</a></li>
+      <li><a href="#circuits">Circuits</a></li>
+      <li><a href="#features">Valeurs</a></li>
+      <li><a href="#testimonials">Témoignages</a></li>
+      <li><a href="#team">Équipe</a></li>
+      <!-- 1. Bouton Connexion bien visible -->
+      <li>
+        <a class="navbar-login-btn" href="/login" aria-label="Connexion">
+          <span class="fa fa-sign-in-alt"></span> Connexion
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero-bgimage" style="background-image:url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1400&q=80')">
+  <div class="hero-overlay"></div>
+  <div class="hero-content hero-content-center">
+    <h1 class="hero-title">
+      <span>Explorez le monde autrement</span><br>
+      <span class="brand">Voyagez vert, vivez bleu</span>
+    </h1>
+    <p class="hero-subtitle">
+      GreenPathAI, l’IA qui vous guide vers des circuits locaux, authentiques et écoresponsables, adaptés à vos envies.
+    </p>
+    <!-- ... searchbar et autres éléments ... -->
+  </div>
+
+  <!-- Bulle flottante -->
+  <div class="hero-chat-bubble" (click)="openChat()">
+    <span>Hi! What can I do for you?</span>
+    <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Avatar utilisateur" class="hero-avatar">
+  </div>
+
+  <!-- Fenêtre du chat -->
+  <div class="chat-popup" *ngIf="isChatOpen">
+    <div class="chat-header">
+      <div class="chat-agent-info">
+        <img src="https://randomuser.me/api/portraits/men/12.jpg" alt="Agent" class="chat-agent-avatar">
+        <div>
+          <div class="chat-agent-name">Jordano Fring</div>
+          <div class="chat-agent-role">Sales Guru</div>
+        </div>
+        <span class="chat-status chat-online"></span>
+      </div>
+      <button class="chat-close" (click)="closeChat()">&#10005;</button>
+    </div>
+    <div class="chat-user-card">
+      <div class="chat-user-icon"><span class="fa fa-user"></span></div>
+      <div>
+        <div><b>Name:</b> Mayssa Jrad</div>
+        <div><b>E-mail:</b> mayssajrad2002&#64;gmail.com</div>
+      </div>
+    </div>
+    <div class="chat-messages">
+      <div class="chat-message chat-message-user">
+        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="User" class="chat-message-avatar">
+        <span>Hello!</span>
+      </div>
+      <div class="chat-transfer">You have been transferred to: Jordano Fring.</div>
+    </div>
+    <form class="chat-input-row">
+      <input type="text" placeholder="Write a message..." />
+      <button type="submit"><span class="fa fa-paper-plane"></span></button>
+      <button type="button"><span class="fa fa-smile"></span></button>
+      <button type="button"><span class="fa fa-paperclip"></span></button>
+    </form>
+    <div class="chat-powered">Powered by <span style="color:#fa541c;font-weight:bold">LiveChat</span></div>
+  </div>
+</section>
+    <!-- 3. CIRCUITS PHARES -->
+<section id="circuits" class="circuits-carousel-section" tabindex="0">
+  <h2>Nos circuits éco-responsables à la une</h2>
+  <div class="carousel-container">
+    <button class="carousel-btn left" aria-label="Précédent" (click)="prev()" [disabled]="currentIndex === 0">&#10094;</button>
+    <div class="carousel-track" #carouselTrack>
+      <div class="circuit-card" *ngFor="let circuit of circuits">
+        <img [src]="circuit.image" [alt]="circuit.alt" (load)="updateCarousel()" />
+        <div class="circuit-content">
+          <h3>{{ circuit.title }}</h3>
+          <p>{{ circuit.description }}</p>
+          <a href="#" class="btn btn-secondary">Voir le circuit</a>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-btn right" aria-label="Suivant" (click)="next()" [disabled]="currentIndex >= maxIndex">&#10095;</button>
+  </div>
+</section>
+
+<section id="features" class="why-greenpath-section">
+  <div class="why-bg"></div>
+  <div class="why-container">
+    <h2 class="why-title">Pourquoi GreenPath&nbsp;?</h2>
+    <div class="why-features-grid">
+      <div class="why-feature-card">
+        <div class="why-feature-icon">
+          <span class="fa-solid fa-leaf"></span>
+        </div>
+        <h3>ÉCO-RESPONSABILITÉ</h3>
+        <p>Nous privilégions des itinéraires à faible impact environnemental et soutenons l’économie locale.</p>
+      </div>
+      <div class="why-feature-card">
+        <div class="why-feature-icon">
+          <span class="fa-solid fa-people-group"></span>
+        </div>
+        <h3>RENCONTRES AUTHENTIQUES</h3>
+        <p>Des expériences humaines au cœur des communautés, avec des guides et partenaires locaux engagés.</p>
+      </div>
+      <div class="why-feature-card">
+        <div class="why-feature-icon">
+          <span class="fa-solid fa-globe"></span>
+        </div>
+        <h3>DESTINATIONS UNIQUES</h3>
+        <p>Des circuits originaux, hors des sentiers battus, sélectionnés pour leur biodiversité et leur culture.</p>
+      </div>
+      <div class="why-feature-card">
+        <div class="why-feature-icon">
+          <span class="fa-solid fa-hand-holding-heart"></span>
+        </div>
+        <h3>ENGAGEMENT SOLIDAIRE</h3>
+        <p>Chaque voyage contribue à des projets sociaux ou environnementaux concrets sur place.</p>
+      </div>
+      <div class="why-feature-card">
+        <div class="why-feature-icon">
+          <span class="fa-solid fa-bed"></span>
+        </div>
+        <h3>HÉBERGEMENTS ÉCORESPONSABLES</h3>
+        <p>Séjournez dans des établissements labellisés et respectueux de l’environnement.</p>
+      </div>
+      <div class="why-feature-card">
+        <div class="why-feature-icon">
+          <span class="fa-solid fa-award"></span>
+        </div>
+        <h3>GARANTIE QUALITÉ & PRIX JUSTE</h3>
+        <p>Un service transparent, des prix justes, et la satisfaction de nos voyageurs au centre de nos priorités.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- 5. TÉMOIGNAGES -->
+<section id="testimonials" class="testimonials">
+  <h2>Témoignages</h2>
+  <div class="testimonials-list">
+    <div class="testimonial-card">
+      <div class="testimonial-text">
+        "Un voyage qui a du sens, des panoramas à couper le souffle, et la certitude d’agir pour la planète !"
+      </div>
+      <div class="testimonial-author">
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Marie" loading="lazy" />
+        <span>Marie, exploratrice nature</span>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-text">
+        "GreenPathAI propose des expériences vraiment différentes, loin des sentiers battus, avec un vrai impact positif."
+      </div>
+      <div class="testimonial-author">
+        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Julien" loading="lazy" />
+        <span>Julien, voyageur local</span>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-text">
+        "L’IA m’a aidée à concevoir un circuit respectueux de la nature, adapté à toute la famille. Top !"
+      </div>
+      <div class="testimonial-author">
+        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Sarah" loading="lazy" />
+        <span>Sarah, famille engagée</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- 6. APPEL À L’ENGAGEMENT / COMMENT ÇA MARCHE -->
+<section class="cta-engagement">
+  <h2>Comment ça marche ?</h2>
+  <div class="steps">
+    <div class="step">
+      <span class="step-number">1</span>
+      <p>Je découvre les circuits et sélectionne mes envies</p>
+    </div>
+    <div class="step">
+      <span class="step-number">2</span>
+      <p>Je reçois des suggestions personnalisées par l’IA</p>
+    </div>
+    <div class="step">
+      <span class="step-number">3</span>
+      <p>Je profite d’une expérience responsable et mémorable !</p>
+    </div>
+  </div>
+  <a href="#signup" class="btn btn-primary">Je m’inscris</a>
+  <a href="#circuits" class="btn btn-secondary">Proposer un circuit</a>
+</section>
+<section class="fun-facts-section">
+  <div class="fun-facts-container" #funFactsContainer>
+    <div class="fun-fact">
+      <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/1f468-200d-1f4bc.svg" alt="Icône Client" class="fun-fact-icon">
+      <div class="fun-fact-number">0</div>
+      <div class="fun-fact-label">Clients satisfaits</div>
+    </div>
+    <div class="fun-fact">
+      <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/26f0.svg" alt="Icône Montagne" class="fun-fact-icon">
+      <div class="fun-fact-number">0</div>
+      <div class="fun-fact-label">Circuits exceptionnels</div>
+    </div>
+    <div class="fun-fact">
+      <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/1f4bc.svg" alt="Icône Partenaires" class="fun-fact-icon">
+      <div class="fun-fact-number">0</div>
+      <div class="fun-fact-label">Partenaires</div>
+    </div>
+    <div class="fun-fact">
+      <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/1f4ac.svg" alt="Icône Q&R" class="fun-fact-icon">
+      <div class="fun-fact-number">0</div>
+      <div class="fun-fact-label">Questions répondues</div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. ÉQUIPE -->
+<section id="team" class="team">
+  <h2>L’équipe engagée</h2>
+  <div class="team-list">
+    <div class="team-member">
+      <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Mayssa Jrad" loading="lazy"/>
+      <h3>Mayssa Jrad</h3>
+      <p>Fondatrice</p>
+    </div>
+  </div>
+  <p class="solo-founder">
+    Porté par <strong>Mayssa Jrad</strong>, GreenPathAI vous invite à oser un tourisme durable et inspirant !
+  </p>
+</section>
+
+<!-- 8. FOOTER -->
+<footer class="footer" id="contact">
+  <div class="footer-content">
+    <div class="footer-left">
+      <span class="logo-circle">G</span>
+      <span class="brand">GreenPathAI</span>
+      <p>© 2025 GreenPathAI. Tous droits réservés.</p>
+    </div>
+    <div class="footer-right">
+      <a href="#">Mentions légales</a>
+      <a href="#">Politique de confidentialité</a>
+      <a href="mailto:contact@greenpathai.com">contact&#64;greenpathai.com</a>
+      <a href="#" aria-label="Instagram"><svg width="20" height="20" fill="currentColor"><circle cx="10" cy="10" r="8" stroke="#51a2e3" stroke-width="2" fill="none"/><circle cx="10" cy="10" r="4" fill="#3cb371"/></svg></a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
