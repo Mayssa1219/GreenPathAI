@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component,ViewEncapsulation  } from '@angular/core';
 import {
   FormBuilder,
+
   FormGroup,
   Validators,
   ReactiveFormsModule,
@@ -9,13 +10,14 @@ import {
   ValidationErrors
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import {NgSelectModule} from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule,NgSelectModule],
   templateUrl: './signup.html',
-  styleUrls: ['./signup.css']
+  styleUrls: ['./signup.css'],
 })
 export class SignupComponent {
   signupForm: FormGroup;
@@ -24,9 +26,10 @@ export class SignupComponent {
 
   constructor(private fb: FormBuilder) {
     this.signupForm = this.fb.group({
-      fullName: ['', Validators.required],
+      firstName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required, Validators.pattern(/^[\d\s\-\+\(\)]+$/)]],
+      location: ['', Validators.required],
+      preferences: [[], Validators.required],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required]
     }, { validators: this.passwordsMatchValidator });
@@ -47,7 +50,14 @@ export class SignupComponent {
 
   onSignUp() {
     if (this.signupForm.valid) {
-      // Logique d'inscription (API, etc.)
+      // Logique d'inscription
     }
   }
+  preferencesList = [
+    { label: 'Nature', value: 'nature' },
+    { label: 'Patrimoine', value: 'patrimoine' },
+    { label: 'Gastronomie', value: 'gastronomie' },
+    { label: 'Sport', value: 'sport' },
+    { label: 'Bien-être', value: 'bien-etre' }
+  ];
 }

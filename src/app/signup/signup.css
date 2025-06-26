@@ -40,14 +40,11 @@
 .login-logo {
   display: flex;
   align-items: center;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   color: #3cb371;
   font-weight: bold;
   text-decoration: none;
   text-shadow: 0 2px 8px #0002;
-  margin-bottom: 1em;
-  user-select: none;
-  transition: transform 0.18s;
 }
 .login-logo .login-svg {
   margin-right: 0.95em;
@@ -105,7 +102,7 @@ form {
   transition: color 0.15s;
 }
 .fa-envelope, .fa-lock, .fa-eye, .fa-eye-slash { color: #51a2e3; }
-.fa-user, .fa-building, .fa-phone { color: #3cb371; }
+.fa-user, .fa-building, .fa-phone, .fa-leaf, .fa-location-dot{ color: #3cb371; }
 
 .login-field input {
   border: none;
@@ -244,4 +241,145 @@ form {
 @media (max-width: 350px) {
   .login-card { padding: 0.5em 0.1em 0.7em 0.1em; }
   .login-logo { font-size: .95rem; }
+}
+::ng-deep .signup-ng-select .ng-select-container {
+  border-radius: 1.5em;
+  background: #f7fafb;
+  border: 2px solid #3cb371;
+  min-height: 2.9em;
+  box-shadow: 0 1px 8px #51a2e311;
+  font-size: 1.09em;
+  font-weight: 600;
+  color: #256baa;
+  padding-left: 0.7em;
+  transition: border 0.17s, box-shadow 0.16s, background 0.15s;
+  align-items: center;
+  display: flex;
+}
+
+::ng-deep .signup-ng-select.ng-select-focused .ng-select-container,
+::ng-deep .signup-ng-select .ng-select-container:focus-within {
+  border: 2px solid #51a2e3;
+  box-shadow: 0 0 0 4px #51a2e322;
+  background: #e4f8ee;
+}
+
+::ng-deep .signup-ng-select .ng-select-container .ng-value-container {
+  align-items: center;
+  min-height: 2.2em;
+  gap: 0.3em;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+}
+
+::ng-deep .signup-ng-select .ng-placeholder {
+  color: #9eb8cc !important;
+  opacity: 1;
+  font-weight: 500;
+  font-size: 1em;
+  letter-spacing: 0.01em;
+}
+
+::ng-deep .signup-ng-select .ng-value {
+  background: #e4f8ee;
+  color: #3cb371;
+  border-radius: 1em;
+  padding: 0.24em 1.2em 0.24em 0.95em;
+  margin-right: 0.28em;
+  font-weight: 700;
+  font-size: 1.01em;
+  display: flex;
+  align-items: center;
+  height: 2em;
+  box-shadow: 0 2px 6px #51a2e312;
+  position: relative;
+  gap: 0.75em;
+}
+
+::ng-deep .signup-ng-select .ng-value-icon {
+  color: #e34e51;
+  font-size: 1.1em;
+  margin-left: 0.35em;
+  margin-right: -0.5em;
+  background: none;
+  border-radius: 50%;
+  transition: background 0.14s;
+  padding: 0.18em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+::ng-deep .signup-ng-select .ng-value-icon:hover {
+  background: #f7eaea;
+}
+
+::ng-deep .signup-ng-select .ng-select-container .ng-input input {
+  font-size: 1.07em;
+  color: #256baa;
+  background: transparent;
+  font-weight: 500;
+  margin-left: 0.25em;
+  min-width: 5em;
+}
+
+::ng-deep .signup-ng-select .ng-arrow-wrapper {
+  color: #51a2e3;
+  right: 1em;
+  font-size: 1.15em;
+}
+
+::ng-deep .signup-ng-select .ng-dropdown-panel {
+  border-radius: 1.5em;
+  box-shadow: 0 8px 24px #51a2e345, 0 2px 10px #3cb37120;
+  margin-top: 0.4em;
+  border: 1.5px solid #e4f8ee;
+  background: #f7fafb;
+  z-index: 20;
+  font-size: 1.08em;
+  padding: 0.2em 0.1em;
+}
+
+::ng-deep .signup-ng-select .ng-dropdown-panel .ng-option {
+  border-radius: 1.2em;
+  padding: 0.63em 1.2em;
+  color: #256baa;
+  font-weight: 700;
+  margin: 0.05em 0;
+  transition: background 0.13s, color 0.13s;
+  cursor: pointer;
+  font-size: 1.03em;
+  display: flex;
+  align-items: center;
+}
+
+::ng-deep .signup-ng-select .ng-dropdown-panel .ng-option:hover,
+::ng-deep .signup-ng-select .ng-dropdown-panel .ng-option.ng-option-selected,
+::ng-deep .signup-ng-select .ng-dropdown-panel .ng-option.ng-option-marked {
+  background: #e4f8ee;
+  color: #3cb371;
+}
+
+::ng-deep .signup-ng-select .ng-dropdown-panel .ng-option.ng-option-disabled {
+  color: #b1bfd4;
+  cursor: not-allowed;
+}
+
+::ng-deep .signup-ng-select .ng-dropdown-panel .ng-option {
+  margin-bottom: 0.18em;
+}
+
+::ng-deep .signup-ng-select .ng-dropdown-panel .ng-option:last-child {
+  margin-bottom: 0;
+}
+::ng-deep .signup-ng-select .ng-value:hover {
+  background: #d7f2e1;
+  color: #256baa;
+}
+::ng-deep .signup-ng-select .ng-select-container .ng-placeholder {
+  display: none !important;
+}
+
+::ng-deep .signup-ng-select .ng-select-container:not(.ng-has-value) .ng-placeholder {
+  display: block !important;
 }
