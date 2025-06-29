@@ -16,13 +16,13 @@
     </div>
     <h2 class="login-title">Créer un compte client</h2>
     <form [formGroup]="signupForm" (ngSubmit)="onSignUp()">
-      <div class="login-field" [class.login-error]="signupForm.get('firstName')?.invalid && signupForm.get('firstName')?.touched">
-        <label for="firstName" class="visually-hidden">Prénom</label>
+      <div class="login-field" [class.login-error]="signupForm.get('FullName')?.invalid && signupForm.get('FullName')?.touched">
+        <label for="FullName" class="visually-hidden">Nom & Prénom</label>
         <span class="fa fa-user"></span>
-        <input id="firstName" type="text" formControlName="firstName" placeholder="Prénom" required autocomplete="given-name">
+        <input id="FullName" type="text" formControlName="FullName" placeholder="Nom & Prénom" required autocomplete="given-name">
       </div>
-      <div class="login-error-message" *ngIf="signupForm.get('firstName')?.invalid && signupForm.get('firstName')?.touched">
-        Veuillez entrer votre prénom.
+      <div class="login-error-message" *ngIf="signupForm.get('FullName')?.invalid && signupForm.get('FullName')?.touched">
+        Veuillez entrer votre nom et prénom.
       </div>
       <div class="login-field" [class.login-error]="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
         <label for="email" class="visually-hidden">Adresse e-mail</label>

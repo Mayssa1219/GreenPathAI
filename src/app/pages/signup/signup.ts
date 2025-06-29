@@ -1,7 +1,6 @@
-import { Component,ViewEncapsulation  } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import {
   FormBuilder,
-
   FormGroup,
   Validators,
   ReactiveFormsModule,
@@ -10,12 +9,13 @@ import {
   ValidationErrors
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import {NgSelectModule} from '@ng-select/ng-select';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { AuthService } from '../../Services/authService'; // <-- Ajoute l'import
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule,NgSelectModule],
+  imports: [ReactiveFormsModule, CommonModule, NgSelectModule],
   templateUrl: './signup.html',
   styleUrls: ['./signup.css'],
 })
@@ -23,10 +23,12 @@ export class SignupComponent {
   signupForm: FormGroup;
   showPassword = false;
   showConfirmPassword = false;
+  successMessage = '';
+  errorMessage = '';
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private authService: AuthService) { // <-- Injecte AuthService
     this.signupForm = this.fb.group({
-      firstName: ['', Validators.required],
+      FullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       location: ['', Validators.required],
       preferences: [[], Validators.required],
@@ -50,9 +52,30 @@ export class SignupComponent {
 
   onSignUp() {
     if (this.signupForm.valid) {
-      // Logique d'inscription
+      const formValue = this.signupForm.value;
+      // Prépare l'objet à envoyer au backend (ajuste les noms de champs selon ton backend)
+      const clientData = {
+        fullname: formValue.FullName,
+        email: formValue.email,
+        location: formValue.location,
+        preferences: formValue.preferences,
+        password: formValue.password
+        // Ajoute d'autres champs si besoin (le backend doit accepter ces noms)
+      };
+      this.authService.register(clientData).subscribe({
+        next: res => {
+          this.successMessage = "Inscription réussie !";
+          this.errorMessage = '';
+          this.signupForm.reset();
+        },
+        error: err => {
+          this.errorMessage = "Erreur lors de l'inscription";
+          this.successMessage = '';
+        }
+      });
     }
   }
+
   preferencesList = [
     { label: 'Nature', value: 'nature' },
     { label: 'Patrimoine', value: 'patrimoine' },
