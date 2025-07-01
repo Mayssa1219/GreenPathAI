@@ -1,0 +1,130 @@
+.success-bg {
+  min-height: 100vh;
+  background: linear-gradient(120deg, #e4f8ee 0%, #51a2e3 100%);
+  background-size: 200% 200%;
+  animation: gradientMove 6s ease-in-out infinite alternate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@keyframes gradientMove {
+  0% {background-position: 0% 60%;}
+  100% {background-position: 100% 40%;}
+}
+
+.success-container {
+  background: var(--surface-contrast, #f8fafb);
+  border-radius: 2.1rem;
+  box-shadow: 0 8px 40px #3cb37116, 0 1.5px 12px #51a2e318;
+  padding: 2.8rem 2.4rem 2.3rem 2.4rem;
+  max-width: 430px;
+  margin: 2rem auto;
+  text-align: center;
+  color: var(--text, #232e35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.2s;
+}
+
+.success-svg-wrapper {
+  margin-bottom: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.success-svg {
+  width: 96px;
+  height: 96px;
+  filter: drop-shadow(0 4px 24px #3cb37122);
+}
+
+h2 {
+  color: var(--primary, #3cb371);
+  font-size: 2.1rem;
+  margin-bottom: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+p {
+  color: var(--text-light, #7d8b97);
+  font-size: 1.19rem;
+  margin-bottom: 2.1rem;
+  line-height: 1.55;
+  strong {
+    color: var(--primary-dark, #25915a);
+    font-weight: 700;
+  }
+}
+
+.btn.btn-primary {
+  font-size: 1.1rem;
+  min-width: 210px;
+  background: linear-gradient(90deg, #3cb371 60%, #51a2e3 100%);
+  color: #fff;
+  border: none;
+  border-radius: 2rem;
+  padding: 1rem 2.2rem;
+  font-weight: 700;
+  box-shadow: 0 2px 14px #3cb37113;
+  cursor: pointer;
+  transition: background 0.19s, box-shadow 0.19s, transform 0.12s;
+  &:hover {
+    background: linear-gradient(90deg, #51a2e3 20%, #3cb371 100%);
+    box-shadow: 0 6px 24px #51a2e344;
+    transform: scale(1.03);
+  }
+}
+
+@media (max-width: 600px) {
+  .success-container {
+    max-width: 96vw;
+    padding: 2rem 3vw 2.1rem 3vw;
+  }
+  .success-svg { width: 70px; height: 70px;}
+}
+/* Animation SVG succès */
+.success-svg {
+  animation: svg-pop 0.7s cubic-bezier(.23,1.18,.9,.93);
+}
+@keyframes svg-pop {
+  0% { transform: scale(0.7); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  80% { transform: scale(0.95);}
+  100% { transform: scale(1);}
+}
+
+/* Halo pulse */
+.success-svg .glow-circle {
+  animation: glowPulse 2.5s infinite alternate;
+  transform-origin: 48px 48px;
+}
+@keyframes glowPulse {
+  from { opacity: 0.82; }
+  to   { opacity: 1; }
+}
+
+/* Cercle principal pop */
+.success-svg .main-circle {
+  transform-origin: 48px 48px;
+  animation: circle-pop 0.7s cubic-bezier(.16,1.12,.8,.92) 0.15s;
+}
+@keyframes circle-pop {
+  0% { transform: scale(0.82);}
+  60% { transform: scale(1.13);}
+  80% { transform: scale(0.97);}
+  100% { transform: scale(1);}
+}
+
+/* Check animé */
+.success-svg .success-check {
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: check-draw 0.7s cubic-bezier(.7,2.8,.2,.8) 0.3s forwards;
+}
+@keyframes check-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}

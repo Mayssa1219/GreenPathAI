@@ -33,4 +33,16 @@ export class AuthService {
   getToken(): string | null {
     return localStorage.getItem('token');
   }
+
+  verifyOtp(email: string, otp: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/verify-otp?email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otp)}`,
+      {}
+    );
+  }
+
+  sendOtp(email: string): Observable<any> {
+    // L'email est passé dans l'URL comme query param ?email=...
+    return this.http.post<any>(`${this.apiUrl}/send-otp?email=${encodeURIComponent(email)}`, {});
+  }
 }

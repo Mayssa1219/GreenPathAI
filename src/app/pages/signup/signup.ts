@@ -1,4 +1,5 @@
 import { Component, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   FormBuilder,
   FormGroup,
@@ -26,7 +27,8 @@ export class SignupComponent {
   successMessage = '';
   errorMessage = '';
 
-  constructor(private fb: FormBuilder, private authService: AuthService) { // <-- Injecte AuthService
+  constructor(private fb: FormBuilder, private authService: AuthService, private route: ActivatedRoute, // <-- à ajouter
+              private router: Router ) { // <-- Injecte AuthService
     this.signupForm = this.fb.group({
       FullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -53,20 +55,27 @@ export class SignupComponent {
   onSignUp() {
     if (this.signupForm.valid) {
       const formValue = this.signupForm.value;
-      // Prépare l'objet à envoyer au backend (ajuste les noms de champs selon ton backend)
       const clientData = {
         fullname: formValue.FullName,
         email: formValue.email,
         location: formValue.location,
         preferences: formValue.preferences,
         password: formValue.password
-        // Ajoute d'autres champs si besoin (le backend doit accepter ces noms)
       };
       this.authService.register(clientData).subscribe({
         next: res => {
-          this.successMessage = "Inscription réussie !";
-          this.errorMessage = '';
-          this.signupForm.reset();
+          console.log("Inscription réussie, on va envoyer l'OTP");
+          this.authService.sendOtp(clientData.email).subscribe({
+            next: () => {
+              console.log("OTP envoyé, redirection...");
+              this.router.navigate(['/otp-verification'], { queryParams: { email: clientData.email } });
+            },
+            error: err => {
+              console.log("Erreur OTP:", err);
+              this.errorMessage = "Inscription validée mais l'envoi du code a échoué.";
+              this.successMessage = '';
+            }
+          });
         },
         error: err => {
           this.errorMessage = "Erreur lors de l'inscription";
