@@ -1,0 +1,94 @@
+{
+  "NAV": {
+    "ACCUEIL": "Accueil",
+    "CIRCUITS": "Circuits",
+    "VALEURS": "Valeurs",
+    "TEMOIGNAGES": "Témoignages",
+    "EQUIPE": "Équipe",
+    "CONNEXION": "Connexion"
+  },
+  "HERO": {
+    "TITLE_LINE1": "Explorez le monde autrement",
+    "TITLE_LINE2": "Voyagez vert, vivez bleu",
+    "SUBTITLE": "GreenPathAI, l’IA qui vous guide vers des circuits locaux, authentiques et écoresponsables, adaptés à vos envies.",
+    "CHAT_BUBBLE_TEXT": "Hi! What can I do for you?"
+  },
+  "CHAT": {
+    "AGENT_NAME": "Jordano Fring",
+    "AGENT_ROLE": "Sales Guru",
+    "USER_NAME": "Mayssa Jrad",
+    "USER_EMAIL": "mayssajrad2002@gmail.com",
+    "HELLO": "Hello!",
+    "TRANSFERRED": "You have been transferred to: Jordano Fring.",
+    "PLACEHOLDER": "Write a message...",
+    "POWERED_BY": "Powered by LiveChat"
+  },
+  "CIRCUITS": {
+    "TITLE": "Nos circuits éco-responsables à la une",
+    "SEE_CIRCUIT": "Voir le circuit",
+    "PREVIOUS": "Précédent",
+    "NEXT": "Suivant"
+  },
+  "FEATURES": {
+    "TITLE": "Pourquoi GreenPath ?",
+    "ECO_RESPONSABILITY": {
+      "TITLE": "ÉCO-RESPONSABILITÉ",
+      "DESC": "Nous privilégions des itinéraires à faible impact environnemental et soutenons l’économie locale."
+    },
+    "AUTHENTIC_MEETINGS": {
+      "TITLE": "RENCONTRES AUTHENTIQUES",
+      "DESC": "Des expériences humaines au cœur des communautés, avec des guides et partenaires locaux engagés."
+    },
+    "UNIQUE_DESTINATIONS": {
+      "TITLE": "DESTINATIONS UNIQUES",
+      "DESC": "Des circuits originaux, hors des sentiers battus, sélectionnés pour leur biodiversité et leur culture."
+    },
+    "SOCIAL_ENGAGEMENT": {
+      "TITLE": "ENGAGEMENT SOLIDAIRE",
+      "DESC": "Chaque voyage contribue à des projets sociaux ou environnementaux concrets sur place."
+    },
+    "ECO_FRIENDLY_ACCOMMODATION": {
+      "TITLE": "HÉBERGEMENTS ÉCORESPONSABLES",
+      "DESC": "Séjournez dans des établissements labellisés et respectueux de l’environnement."
+    },
+    "QUALITY_GUARANTEE": {
+      "TITLE": "GARANTIE QUALITÉ & PRIX JUSTE",
+      "DESC": "Un service transparent, des prix justes, et la satisfaction de nos voyageurs au centre de nos priorités."
+    }
+  },
+  "TESTIMONIALS": {
+    "TITLE": "Témoignages",
+    "TESTIMONIAL_1": "\"Un voyage qui a du sens, des panoramas à couper le souffle, et la certitude d’agir pour la planète !\"",
+    "AUTHOR_1": "Marie, exploratrice nature",
+    "TESTIMONIAL_2": "\"GreenPathAI propose des expériences vraiment différentes, loin des sentiers battus, avec un vrai impact positif.\"",
+    "AUTHOR_2": "Julien, voyageur local",
+    "TESTIMONIAL_3": "\"L’IA m’a aidée à concevoir un circuit respectueux de la nature, adapté à toute la famille. Top !\"",
+    "AUTHOR_3": "Sarah, famille engagée"
+  },
+  "CTA": {
+    "HOW_IT_WORKS_TITLE": "Comment ça marche ?",
+    "STEP_1": "Je découvre les circuits et sélectionne mes envies",
+    "STEP_2": "Je reçois des suggestions personnalisées par l’IA",
+    "STEP_3": "Je profite d’une expérience responsable et mémorable !",
+    "SIGNUP": "Je m’inscris",
+    "PROPOSE_CIRCUIT": "Proposer un circuit"
+  },
+  "FUN_FACTS": {
+    "CLIENTS": "Clients satisfaits",
+    "TOURS": "Circuits exceptionnels",
+    "PARTNERS": "Partenaires",
+    "QUESTIONS": "Questions répondues"
+  },
+  "TEAM": {
+    "TITLE": "L’équipe engagée",
+    "FOUNDER": "Fondatrice",
+    "FOUNDER_NAME": "Mayssa Jrad",
+    "FOUNDER_DESC": "Porté par Mayssa Jrad, GreenPathAI vous invite à oser un tourisme durable et inspirant !"
+  },
+  "FOOTER": {
+    "COPYRIGHT": "© 2025 GreenPathAI. Tous droits réservés.",
+    "LEGAL": "Mentions légales",
+    "PRIVACY": "Politique de confidentialité",
+    "CONTACT_EMAIL": "contact@greenpathai.com"
+  }
+}

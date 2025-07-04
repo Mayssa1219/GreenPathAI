@@ -34,6 +34,14 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
+  setToken(token: string): void {
+    localStorage.setItem('token', token);
+  }
+
+  loginWithGoogle(): void {
+    window.location.href = 'http://localhost:8081/api/auth/google/login';
+  }
+
   verifyOtp(email: string, otp: string): Observable<any> {
     return this.http.post<any>(
       `${this.apiUrl}/verify-otp?email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otp)}`,
@@ -42,7 +50,22 @@ export class AuthService {
   }
 
   sendOtp(email: string): Observable<any> {
-    // L'email est passé dans l'URL comme query param ?email=...
     return this.http.post<any>(`${this.apiUrl}/send-otp?email=${encodeURIComponent(email)}`, {});
+  }
+
+  requestResetPassword(email: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/request-reset-password`,
+      null,
+      { params: { email } }
+    );
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/reset-password`,
+      null,
+      { params: { token, newPassword } }
+    );
   }
 }

@@ -55,9 +55,16 @@
         Le mot de passe est requis.
       </div>
       <button class="login-btn" type="submit" [disabled]="loginForm.invalid">Se connecter</button>
+
+      <!-- BOUTON GOOGLE -->
+      <button type="button" class="google-btn" (click)="loginWithGoogle()">
+        <span class="fab fa-google"></span> Connexion avec Google
+      </button>
+      <!-- FIN BOUTON GOOGLE -->
+
     </form>
     <div class="login-links">
-      <a routerLink="/forgot-password">Mot de passe oublié ?</a>
+      <a href="/forgot-password">Mot de passe oublié ?</a>
       <span>&nbsp;|&nbsp;</span>
       <a href="/signup">Créer un compte</a>
     </div>

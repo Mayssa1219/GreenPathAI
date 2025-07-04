@@ -1,0 +1,94 @@
+{
+  "NAV": {
+    "ACCUEIL": "Home",
+    "CIRCUITS": "Tours",
+    "VALEURS": "Values",
+    "TEMOIGNAGES": "Testimonials",
+    "EQUIPE": "Team",
+    "CONNEXION": "Login"
+  },
+  "HERO": {
+    "TITLE_LINE1": "Explore the world differently",
+    "TITLE_LINE2": "Travel green, live blue",
+    "SUBTITLE": "GreenPathAI, the AI guiding you to local, authentic, and eco-friendly tours tailored to your desires.",
+    "CHAT_BUBBLE_TEXT": "Hi! What can I do for you?"
+  },
+  "CHAT": {
+    "AGENT_NAME": "Jordano Fring",
+    "AGENT_ROLE": "Sales Guru",
+    "USER_NAME": "Mayssa Jrad",
+    "USER_EMAIL": "mayssajrad2002@gmail.com",
+    "HELLO": "Hello!",
+    "TRANSFERRED": "You have been transferred to: Jordano Fring.",
+    "PLACEHOLDER": "Write a message...",
+    "POWERED_BY": "Powered by LiveChat"
+  },
+  "CIRCUITS": {
+    "TITLE": "Our Featured Eco-Friendly Tours",
+    "SEE_CIRCUIT": "See the tour",
+    "PREVIOUS": "Previous",
+    "NEXT": "Next"
+  },
+  "FEATURES": {
+    "TITLE": "Why GreenPath?",
+    "ECO_RESPONSABILITY": {
+      "TITLE": "ECO-RESPONSIBILITY",
+      "DESC": "We prioritize low environmental impact routes and support the local economy."
+    },
+    "AUTHENTIC_MEETINGS": {
+      "TITLE": "AUTHENTIC MEETINGS",
+      "DESC": "Human experiences at the heart of communities, with engaged local guides and partners."
+    },
+    "UNIQUE_DESTINATIONS": {
+      "TITLE": "UNIQUE DESTINATIONS",
+      "DESC": "Original tours, off the beaten path, selected for their biodiversity and culture."
+    },
+    "SOCIAL_ENGAGEMENT": {
+      "TITLE": "SOCIAL ENGAGEMENT",
+      "DESC": "Each trip contributes to concrete social or environmental projects on site."
+    },
+    "ECO_FRIENDLY_ACCOMMODATION": {
+      "TITLE": "ECO-FRIENDLY ACCOMMODATION",
+      "DESC": "Stay in labeled and environmentally respectful establishments."
+    },
+    "QUALITY_GUARANTEE": {
+      "TITLE": "QUALITY GUARANTEE & FAIR PRICE",
+      "DESC": "Transparent service, fair prices, and traveler satisfaction at the core of our priorities."
+    }
+  },
+  "TESTIMONIALS": {
+    "TITLE": "Testimonials",
+    "TESTIMONIAL_1": "\"A meaningful trip, breathtaking landscapes, and the certainty of acting for the planet!\"",
+    "AUTHOR_1": "Marie, nature explorer",
+    "TESTIMONIAL_2": "\"GreenPathAI offers truly different experiences, off the beaten path, with a real positive impact.\"",
+    "AUTHOR_2": "Julien, local traveler",
+    "TESTIMONIAL_3": "\"The AI helped me design a nature-friendly tour suitable for the whole family. Awesome!\"",
+    "AUTHOR_3": "Sarah, engaged family"
+  },
+  "CTA": {
+    "HOW_IT_WORKS_TITLE": "How does it work?",
+    "STEP_1": "I discover tours and select my preferences",
+    "STEP_2": "I receive personalized suggestions from the AI",
+    "STEP_3": "I enjoy a responsible and memorable experience!",
+    "SIGNUP": "Sign up",
+    "PROPOSE_CIRCUIT": "Propose a tour"
+  },
+  "FUN_FACTS": {
+    "CLIENTS": "Satisfied clients",
+    "TOURS": "Exceptional tours",
+    "PARTNERS": "Partners",
+    "QUESTIONS": "Questions answered"
+  },
+  "TEAM": {
+    "TITLE": "Committed team",
+    "FOUNDER": "Founder",
+    "FOUNDER_NAME": "Mayssa Jrad",
+    "FOUNDER_DESC": "Led by Mayssa Jrad, GreenPathAI invites you to dare sustainable and inspiring tourism!"
+  },
+  "FOOTER": {
+    "COPYRIGHT": "© 2025 GreenPathAI. All rights reserved.",
+    "LEGAL": "Legal notice",
+    "PRIVACY": "Privacy policy",
+    "CONTACT_EMAIL": "contact@greenpathai.com"
+  }
+}

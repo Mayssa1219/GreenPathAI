@@ -1,5 +1,6 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import {
   FormBuilder,
   FormGroup,
@@ -11,12 +12,13 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { AuthService } from '../../Services/authService'; // <-- Ajoute l'import
+import { AuthService } from '../../Services/authService';
+import {HttpClientModule} from '@angular/common/http'; // <-- Ajoute l'import
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, NgSelectModule],
+  imports: [ReactiveFormsModule, CommonModule, NgSelectModule, ],
   templateUrl: './signup.html',
   styleUrls: ['./signup.css'],
 })
@@ -27,7 +29,8 @@ export class SignupComponent {
   successMessage = '';
   errorMessage = '';
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private route: ActivatedRoute, // <-- à ajouter
+  constructor(private fb: FormBuilder, private authService: AuthService,  private http: HttpClient // <-- ici
+,  private route: ActivatedRoute, // <-- à ajouter
               private router: Router ) { // <-- Injecte AuthService
     this.signupForm = this.fb.group({
       FullName: ['', Validators.required],
@@ -92,4 +95,63 @@ export class SignupComponent {
     { label: 'Sport', value: 'sport' },
     { label: 'Bien-être', value: 'bien-etre' }
   ];
+  locationPreview = '';
+
+  getCurrentLocation() {
+    if (!navigator.geolocation) {
+      this.errorMessage = 'La géolocalisation n’est pas supportée par votre navigateur.';
+      return;
+    }
+
+    this.errorMessage = 'Détection en cours...';
+
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const { latitude, longitude } = position.coords;
+        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`;
+
+        this.http.get<any>(url).subscribe({
+          next: res => {
+            const address = res.address;
+
+            const road = address.road || '';
+            const neighbourhood = address.neighbourhood || '';
+            const suburb = address.suburb || '';
+            const city = address.city || address.town || address.village || address.hamlet || '';
+            const state = address.state || '';
+            const postcode = address.postcode || '';
+            const country = address.country || '';
+
+            const fullLocation = [
+              road,
+              neighbourhood,
+              suburb,
+              city,
+              state,
+              postcode,
+              country
+            ].filter(part => part).join(', ');
+
+            this.signupForm.patchValue({ location: fullLocation });
+            this.locationPreview = fullLocation;
+            this.errorMessage = '';
+          },
+          error: err => {
+            console.error('Erreur reverse geocoding :', err);
+            const fallback = `${latitude}, ${longitude}`;
+            this.signupForm.patchValue({ location: fallback });
+            this.locationPreview = fallback;
+            this.errorMessage = "Coordonnées récupérées, mais la ville n'a pas pu être identifiée.";
+          }
+        });
+      },
+      error => {
+        this.errorMessage = 'Impossible de récupérer votre position : ' + error.message;
+      },
+      { enableHighAccuracy: true, timeout: 5000 }
+    );
+  }
+
+
+
 }

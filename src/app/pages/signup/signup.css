@@ -168,6 +168,53 @@ form {
   margin: 0.2em 0 0.6em 2.2em;
   font-weight: 500;
 }
+.location-group {
+  position: relative;
+}
+
+.login-field {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.login-field input {
+  flex: 1;
+  padding-right: 40px;
+}
+
+.gps-btn {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: var(--primary-dark, #256baa);
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
+}
+
+.gps-btn:hover {
+  color: var(--accent-dark, #25915a);
+}
+
+.btn-detect {
+  margin-left: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.location-preview {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #256baa;
+}
+
+.login-field {
+  position: relative;
+}
 
 .login-btn {
   margin-top: 1.05em;

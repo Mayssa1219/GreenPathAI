@@ -1,15 +1,24 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { NgFor , NgIf} from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
+import {FormsModule} from '@angular/forms';
+ // Crée ce service comme montré précédemment
+
+interface Circuit {
+  image: string;
+  alt: string;
+  title: string;
+  description: string;
+}
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgFor, NgIf],
+  imports: [NgFor, NgIf,FormsModule ],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
 export class HomeComponent implements AfterViewInit, OnDestroy {
-  circuits = [
+  circuits: Circuit[] = [
     {
       image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
       alt: 'Forêt et lac',
@@ -42,6 +51,16 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     }
   ];
 
+  originalCircuits: Circuit[] = JSON.parse(JSON.stringify(this.circuits)); // Pour reset sur changement de langue
+
+  selectedLang = 'fr';
+  supportedLangs = [
+    { code: 'fr', label: 'Français' },
+    { code: 'en', label: 'English' },
+    { code: 'es', label: 'Español' },
+    { code: 'de', label: 'Deutsch' }
+  ];
+
   @ViewChild('carouselTrack', { static: true }) carouselTrack!: ElementRef<HTMLDivElement>;
   currentIndex = 0;
   visibleCount = 3;
@@ -51,16 +70,18 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     return Math.max(0, this.circuits.length - this.visibleCount);
   }
 
+  constructor() {}
+
   ngAfterViewInit() {
     this.updateVisibleCount();
     this.updateCarousel();
-    // Observe resize of container or images
     this.resizeObserver = new ResizeObserver(() => {
       this.updateVisibleCount();
       this.updateCarousel();
     });
     this.resizeObserver.observe(this.carouselTrack.nativeElement);
     window.addEventListener('resize', this.onWindowResize);
+
     // Fun facts animation
     const funFactNumbers = this.funFactsContainer.nativeElement.querySelectorAll<HTMLElement>('.fun-fact-number');
     this.funFactObserver = new IntersectionObserver((entries, obs) => {
@@ -101,10 +122,8 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     const track = this.carouselTrack.nativeElement;
     const cards = track.children;
     if (cards.length === 0) return;
-    // gap calculé dynamiquement
     const gap = parseFloat(getComputedStyle(track).gap || '16') || 16;
     const cardWidth = (cards[0] as HTMLElement).offsetWidth + gap;
-    // Clamp
     this.currentIndex = Math.max(0, Math.min(this.currentIndex, this.maxIndex));
     track.style.transform = `translateX(-${this.currentIndex * cardWidth}px)`;
   }
@@ -122,13 +141,12 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
       this.updateCarousel();
     }
   }
+
   // Fun fact values in order: Clients, Circuits, Partenaires, Questions
   funFactTargets = [623744, 112, 594, 8711];
 
   @ViewChild('funFactsContainer', { static: true }) funFactsContainer!: ElementRef<HTMLDivElement>;
   private funFactObserver!: IntersectionObserver;
-
-
 
   animateCounter(el: HTMLElement, target: number, duration: number = 1900) {
     let start = 0;
@@ -147,6 +165,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     };
     requestAnimationFrame(updateCounter);
   }
+
   isChatOpen = false;
 
   openChat() {
@@ -156,4 +175,9 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   closeChat() {
     this.isChatOpen = false;
   }
+
+
+
+
+
 }

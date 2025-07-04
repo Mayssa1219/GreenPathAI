@@ -32,14 +32,27 @@
       <div class="login-error-message" *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
         Veuillez entrer une adresse e-mail valide.
       </div>
-      <div class="login-field" [class.login-error]="signupForm.get('location')?.invalid && signupForm.get('location')?.touched">
-        <label for="location" class="visually-hidden">Localisation</label>
-        <span class="fa fa-location-dot"></span>
-        <input id="location" type="text" formControlName="location" placeholder="Votre ville ou région" required autocomplete="address-level2">
+      <div class="location-group">
+        <div class="login-field" [class.login-error]="signupForm.get('location')?.invalid && signupForm.get('location')?.touched">
+          <label for="location" class="visually-hidden">Localisation</label>
+          <span class="fa fa-location-dot"></span>
+          <input id="location" type="text" formControlName="location" placeholder="Votre ville ou région" required autocomplete="address-level2">
+          <button type="button" class="gps-btn" (click)="getCurrentLocation()" title="Utiliser ma position">
+            <i class="fa fa-crosshairs"></i>
+          </button>
+        </div>
+        <div class="login-error-message" *ngIf="signupForm.get('location')?.invalid && signupForm.get('location')?.touched">
+          Veuillez préciser votre localisation.
+        </div>
       </div>
-      <div class="login-error-message" *ngIf="signupForm.get('location')?.invalid && signupForm.get('location')?.touched">
-        Veuillez préciser votre localisation.
-      </div>
+      <p *ngIf="locationPreview" class="location-preview">
+        📍 Localisation détectée : <strong>{{ locationPreview }}</strong>
+      </p>
+
+
+      <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+
       <div class="login-field" [class.login-error]="signupForm.get('preferences')?.invalid && signupForm.get('preferences')?.touched">
         <label for="preferences" class="visually-hidden">Préférences</label>
         <span class="fa fa-leaf"></span>
