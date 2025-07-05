@@ -13,8 +13,58 @@
   --shadow: 0 4px 24px rgba(44, 62, 80, 0.07);
   --radius: 1.2rem;
   --gradient: linear-gradient(100deg, #3cb371 0%, #51a2e3 100%);
+  body {
+    transition: all 0.4s ease;
+  }
+  .sidebar,
+  .navbar,
+  .menu-link,
+  .theme-toggle,
+  .footer,
+  input,
+  button {
+    transition: background 0.4s ease, color 0.4s ease, border 0.3s ease;
+  }
+}
+body.dark-theme {
+  --primary: #26c485;
+  --primary-dark: #1f9d66;
+  --primary-light: #1e5240;
+
+  --accent: #5ab6ff;
+  --accent-dark: #1e88e5;
+
+  --background: #121417;
+  --surface: #1e1f24;
+  --surface-contrast: #2a2b30;
+
+  --text: #f5f5f7;
+  --text-light: #a0a4ad;
+  --border: #3a3d42;
+
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+  --gradient: linear-gradient(135deg, #26c485, #5ab6ff); /* Dégradé moderne vert/bleu */
 }
 
+/* 🌙 Mode Sombre : Soleil lumineux */
+body.dark-theme .theme-icon {
+  color: #fdd835;
+  text-shadow:
+    0 0 6px rgba(253, 216, 53, 0.7),
+    0 0 12px rgba(253, 216, 53, 0.5),
+    0 0 18px rgba(253, 216, 53, 0.3);
+  filter: drop-shadow(0 0 4px rgba(253, 216, 53, 0.3));
+}
+
+/* ☀️ Mode Clair : Lune douce mais visible */
+body:not(.dark-theme) .theme-icon {
+  color: #b0bec5;
+  text-shadow:
+    0 0 4px rgba(176, 190, 197, 0.5),
+    0 0 8px rgba(176, 190, 197, 0.4),
+    0 0 10px rgba(176, 190, 197, 0.3);
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2));
+}
 body {
   background: var(--background);
   color: var(--text);
@@ -22,8 +72,23 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  animation: fadeIn 0.4s ease-in-out;
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease,
+    filter 0.4s ease,
+    box-shadow 0.4s ease;
 }
-
+@keyframes fadeIn {
+  from {
+    opacity: 0.5;
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
 h1, h2, h3, h4, h5, h6 {
   color: var(--primary-dark);
   font-weight: 700;

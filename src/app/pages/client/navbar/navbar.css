@@ -1,0 +1,320 @@
+/* ----------------- ROOT THEME ----------------- */
+:root {
+  --primary: #3cb371;
+  --primary-dark: #25915a;
+  --primary-light: #e4f8ee;
+  --accent: #51a2e3;
+  --accent-dark: #256baa;
+  --background: #f8fafb;
+  --surface: #fff;
+  --surface-contrast: #f1f4f7;
+  --text: #232e35;
+  --text-light: #7d8b97;
+  --border: #e4e8ee;
+  --shadow: 0 4px 24px rgba(44, 62, 80, 0.07);
+  --radius: 1rem;
+  --gradient: linear-gradient(100deg, #3cb371 0%, #51a2e3 100%);
+}
+
+/* ----------------- BASE ----------------- */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--background);
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+/* ----------------- NAVBAR ----------------- */
+.site-nav {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 0.8rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1000;
+}
+
+.navbar-title {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--primary-dark);
+  gap: 0.6rem;
+  text-decoration: none;
+}
+
+.logo-circle {
+  background: var(--gradient);
+  color: white;
+  width: 2em;
+  height: 2em;
+  border-radius: 50%;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px #3cb37126;
+}
+
+/* ----------------- SIDEBAR ----------------- */
+.sidebar {
+  width: 270px;
+  min-height: 100vh;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease, transform 0.3s ease;
+  z-index: 999;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+}
+
+/* ----------------- SIDEBAR HEADER ----------------- */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-header .header-logo {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--primary-dark);
+}
+
+.sidebar.collapsed .header-logo:not(img) {
+  display: none;
+}
+
+/* ----------------- TOGGLE BUTTON ----------------- */
+.sidebar-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--primary-dark);
+}
+
+/* ----------------- SEARCH FORM ----------------- */
+.search-form {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  gap: 0.5rem;
+}
+
+.search-form input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  color: var(--text);
+}
+
+.sidebar.collapsed .search-form {
+  display: none;
+}
+
+/* ----------------- MENU ----------------- */
+.menu-list {
+  list-style: none;
+  padding: 1rem 0;
+  margin: 0;
+}
+
+.menu-item {
+  margin-bottom: 0.3rem;
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.2rem;
+  color: var(--text);
+  text-decoration: none;
+  gap: 0.8rem;
+  border-radius: var(--radius);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.menu-link:hover {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.menu-link.active {
+  background: var(--accent);
+  color: white;
+}
+
+.menu-link.active .material-symbols-rounded {
+  color: white;
+}
+
+.sidebar.collapsed .menu-label {
+  display: none;
+}
+
+/* ----------------- FOOTER ----------------- */
+.sidebar-footer {
+  margin-top: auto;
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Bouton entier */
+.theme-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface-contrast);
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+/* Partie gauche (icone + texte) */
+.theme-toggle-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* Switch track */
+.theme-toggle-track {
+  width: 36px;
+  height: 20px;
+  background: var(--primary-light);
+  border-radius: 12px;
+  position: relative;
+  transition: background 0.3s ease;
+}
+
+/* Cercle du switch */
+.theme-toggle-indicator {
+  width: 16px;
+  height: 16px;
+  background: var(--primary);
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle-indicator.active {
+  transform: translateX(16px);
+}
+.theme-icon {
+  font-size: 1.4rem;
+  transition: color 0.3s, text-shadow 0.3s;
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.1));
+  position: relative;
+
+}
+.theme-icon::before {
+  content: "";
+  position: absolute;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  z-index: -1;
+  opacity: 0.6;
+}
+.theme-toggle:active .theme-icon {
+  transform: rotate(20deg) scale(1.1);
+}
+
+
+
+/* ----------------- CONTENT ----------------- */
+.container {
+  display: flex;
+  margin-top: 60px; /* navbar height */
+}
+
+.main-content {
+  margin-left: 270px;
+  padding: 2rem;
+  transition: margin-left 0.3s ease;
+  flex: 1;
+  background: var(--background);
+  min-height: 100vh;
+}
+
+.sidebar.collapsed ~ .main-content {
+  margin-left: 80px;
+}
+
+/* ----------------- TRANSITIONS ----------------- */
+.sidebar,
+.main-content,
+.sidebar-header,
+.menu-link,
+.search-form input {
+  transition: all 0.3s ease;
+}
+
+/* ----------------- RESPONSIVE ----------------- */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    position: absolute;
+    z-index: 1001;
+  }
+
+  .sidebar.collapsed {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+  }
+
+  .sidebar ~ .main-content,
+  .sidebar.collapsed ~ .main-content {
+    margin-left: 0 !important;
+  }
+}
+
+/* ----------------- OPTIONAL DARK THEME ----------------- */
+body.dark-theme {
+  --background: #121212;
+  --surface: #1f1f1f;
+  --surface-contrast: #2c2c2c;
+  --text: #e0e0e0;
+  --text-light: #9e9e9e;
+  --primary-light: #345e4e;
+  --shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+}
+/* Masquer texte + track dans la version réduite */
+.sidebar.collapsed .theme-toggle-left .theme-text,
+.sidebar.collapsed .theme-toggle-track {
+  display: none;
+}
+
+/* Centrer uniquement l’icône dans la version réduite */
+.sidebar.collapsed .theme-toggle-left {
+  justify-content: center;
+  width: 100%;
+}
+

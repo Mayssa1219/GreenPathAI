@@ -1,0 +1,85 @@
+<!-- Google Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+<!-- Navbar -->
+<nav class="site-nav">
+  <button (click)="toggleSidebar()" class="sidebar-toggle" aria-label="Toggle sidebar">
+    <span class="material-symbols-rounded">menu</span>
+  </button>
+
+  <a routerLink="/" class="navbar-title">
+    <span class="logo-circle">G</span>
+    <span class="brand-name">GreenPathAI</span>
+  </a>
+</nav>
+
+<!-- Sidebar + Content -->
+<div class="container">
+  <!-- Sidebar -->
+  <aside [class.collapsed]="collapsed" class="sidebar">
+    <div class="sidebar-header">
+      <img src="assets/logo.png" alt="GreenPathAI" class="header-logo" />
+      <span class="header-logo">GreenPathAI</span>
+      <button (click)="toggleSidebar()" class="sidebar-toggle">
+        <span class="material-symbols-rounded">chevron_left</span>
+      </button>
+    </div>
+
+    <form class="search-form">
+      <span class="material-symbols-rounded">search</span>
+      <input type="search" placeholder="Rechercher..." />
+    </form>
+
+    <ul class="menu-list">
+      <li class="menu-item">
+        <a routerLink="/dashboard" class="menu-link">
+          <span class="material-symbols-rounded">dashboard</span>
+          <span class="menu-label">Dashboard</span>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a routerLink="/suggestions" class="menu-link">
+          <span class="material-symbols-rounded">travel_explore</span>
+          <span class="menu-label">Suggestions IA</span>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a routerLink="/favoris" class="menu-link">
+          <span class="material-symbols-rounded">star</span>
+          <span class="menu-label">Favoris</span>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a routerLink="/profil" class="menu-link">
+          <span class="material-symbols-rounded">person</span>
+          <span class="menu-label">Profil</span>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a class="menu-link">
+          <span class="material-symbols-rounded">logout</span>
+          <span class="menu-label">Déconnexion</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <button (click)="toggleTheme()" class="theme-toggle">
+        <div class="theme-toggle-left">
+          <span class="theme-icon material-symbols-rounded">
+          {{ isDarkTheme ? 'light_mode' : 'dark_mode' }}
+         </span>
+
+          <span class="theme-text">Mode Sombre</span>
+        </div>
+        <div class="theme-toggle-track">
+          <div class="theme-toggle-indicator" [class.active]="isDarkTheme"></div>
+        </div>
+      </button>
+    </div>
+
+
+  </aside>
+
+
+</div>
