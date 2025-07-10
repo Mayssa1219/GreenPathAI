@@ -1,19 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, NgModule, OnInit} from '@angular/core';
+import {Client} from '../../../models/client';
+import {ClientService} from '../../../Services/ClientService';
+import {CommonModule, NgIf} from '@angular/common';
+import {Router, RouterModule} from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
+  standalone: true,
+  imports: [CommonModule, NgIf],
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.css'],
-  standalone: true
 })
 export class NavbarComponent implements OnInit {
   collapsed = true;
   isDarkTheme = false;
-
+  logout(): void {
+    localStorage.removeItem('token');
+    this.router.navigate(['/login']);
+  }
   toggleSidebar(): void {
     this.collapsed = !this.collapsed;
   }
+  unreadCount = 3; // 🔴 à mettre à jour dynamiquement selon tes données
 
+  toggleNotifications() {
+    // Par exemple : ouvrir une fenêtre latérale, ou naviguer vers /notifications
+    console.log("Notifications cliquées !");
+  }
   toggleTheme(): void {
     this.isDarkTheme = !this.isDarkTheme;
     this.applyTheme();
@@ -28,7 +41,18 @@ export class NavbarComponent implements OnInit {
       document.body.classList.remove('dark-theme');
     }
   }
+  username = 'Utilisateur';
+  email = '';
+  userId = '';
+  clientData: Client | null = null;
 
+  photoUrl = 'default-avatar.png';
+  constructor(
+    private clientService: ClientService,
+    private router:Router
+  ) {
+
+  }
   ngOnInit(): void {
     const storedTheme = localStorage.getItem('theme');
     this.isDarkTheme = storedTheme === 'dark';
@@ -40,5 +64,24 @@ export class NavbarComponent implements OnInit {
       this.isDarkTheme = false;
       document.body.classList.remove('dark-theme');
     }
-  }
+    const decoded = this.clientService.decodeToken();
+    if (decoded && decoded.sub) {
+      this.userId = decoded.sub;
+      this.username = decoded['username'] || decoded.sub || 'Utilisateur';
+      this.email = decoded['email'] || '';
+
+      this.clientService.getClientInfo(this.userId).subscribe({
+        next: (client) => {
+          this.clientData = client;
+          // Si tu veux surcharger username / email avec les données backend, fais-le ici
+          this.username = client.prenom + ' ' + client.nom;
+          this.email = client.email;
+          this.photoUrl = client.photoUrl || 'assets/default-avatar.png'; // fallback image
+        },
+        error: (err) => {
+          console.error('Erreur récupération client:', err);
+        }
+      });
+    }}
+
 }

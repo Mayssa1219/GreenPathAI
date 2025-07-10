@@ -1,9 +1,229 @@
-<app-navbar></app-navbar>
-<div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <h1>Dashboard</h1>
-      <p>Welcome to your dashboard!</p>
+<app-navbar>
+  <div class="dashboard-home container">
+
+    <!-- HEADER -->
+    <header class="welcome-header">
+      <!-- Partie gauche : profil + message de bienvenue -->
+      <div class="welcome-left">
+        <div class="profile-info">
+          <div>
+            <h1 class="greeting-title">
+               Bienvenue, <span class="username">{{ username }}</span>
+            </h1>
+            <a routerLink="/score-eco" class="eco-score-link" title="Voir votre score d’écoresponsabilité">
+              <div class="eco-score-container" [title]="getEcoTooltip(stats.ecoScore)">
+                <div class="eco-score-badge">
+                  <span class="material-symbols-rounded">eco</span>
+                  <div class="eco-score-info">
+                    <strong>{{ stats.ecoScore }}</strong> — {{ getEcoLevel(stats.ecoScore) }}
+                  </div>
+                </div>
+
+                <div class="eco-progress-bar">
+                  <div
+                    class="eco-score-fill"
+                    [ngStyle]="{
+                      '--score-width': stats.ecoScore + '%',
+                      backgroundColor: getEcoColor(stats.ecoScore)
+                    }"
+                  ></div>
+
+                </div>
+              </div>
+
+            </a>
+            <p class="subtitle">
+              Voici un aperçu personnalisé de votre activité sur <strong>GreenPathAI</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Partie droite : astuce verte -->
+      <div class="welcome-tip">
+        <section class="card tip">
+          <h2>
+             Astuce du jour
+          </h2>
+          <blockquote>"{{ greenTip }}"</blockquote>
+        </section>
+      </div>
+    </header>
+    <!-- ✅ TOAST NOTIFICATION -->
+    <div class="toast" *ngIf="showToast">
+      <span class="material-symbols-rounded">notifications</span>
+      {{ toastMessage }}
+      <button class="close-toast" (click)="closeToast()">×</button>
     </div>
+
+
+    <!-- GRILLE PRINCIPALE -->
+    <div class="dashboard-grid">
+
+      <!-- Statistiques -->
+      <section class="card stats">
+        <h2 class="section-title">
+          <span class="material-symbols-rounded">insights</span> Statistiques
+        </h2>
+        <div class="stats-row">
+          <div class="stat-item">
+            <span class="material-symbols-rounded">map</span>
+            <h4>{{ stats.circuits }}</h4>
+            <p>Circuits</p>
+          </div>
+          <div class="stat-item">
+            <span class="material-symbols-rounded">smart_toy</span>
+            <h4>{{ stats.suggestions }}</h4>
+            <p>Suggestions IA</p>
+          </div>
+          <div class="stat-item">
+            <span class="material-symbols-rounded">star</span>
+            <h4>{{ stats.favoris }}</h4>
+            <p>Favoris</p>
+          </div>
+          <div class="stat-item">
+            <span class="material-symbols-rounded">history</span>
+            <h4>{{ stats.lastActivity }}</h4>
+            <p>Activité</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Météo -->
+      <section class="card weather" [ngClass]="'weather-' + weather?.weather[0]?.main?.toLowerCase()" *ngIf="!weatherError; else errorTpl">
+        <h2 class="section-title">
+          <span class="material-symbols-rounded">partly_cloudy_day</span>
+          Météo à {{ weather?.name }}
+        </h2>
+
+        <div class="weather-modern">
+          <div class="weather-main">
+            <img
+              class="weather-icon"
+              [src]="'https://openweathermap.org/img/wn/' + weather?.weather[0]?.icon + '@4x.png'"
+              alt="Météo"
+            />
+            <div class="weather-temp-info">
+              <p class="main-temp">{{ weather?.main?.temp }}°C</p>
+              <p class="desc">{{ weather?.weather[0]?.description | titlecase }}</p>
+            </div>
+          </div>
+
+          <div class="weather-details">
+            <div class="detail-item">
+              <span class="material-symbols-rounded">water_drop</span>
+              <p>Humidité : <strong>{{ weather?.main?.humidity }}%</strong></p>
+            </div>
+            <div class="detail-item">
+              <span class="material-symbols-rounded">air</span>
+              <p>Vent : <strong>{{ weather?.wind?.speed }} km/h</strong></p>
+            </div>
+            <div class="detail-item">
+              <span class="material-symbols-rounded">device_thermostat</span>
+              <p>Ressenti : <strong>{{ weather?.main?.feels_like }}°C</strong></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- Planning -->
+      <!-- Planning amélioré -->
+      <section class="card planning">
+        <div class="planning-header">
+          <h2 class="section-title">
+            <span class="material-symbols-rounded">event</span> Votre agenda
+          </h2>
+          <button routerLink="/planifier" class="btn-planifier">
+            <span class="material-symbols-rounded">add</span>
+            Planifier un événement
+          </button>
+
+        </div>
+
+        <div class="planning-info">
+
+          <div class="planning-item">
+            <div class="left">
+              <span class="material-symbols-rounded">place</span>
+              <div>
+                <h4>Prochaine réservation</h4>
+                <p>{{ planning.prochaineReservation }}</p>
+              </div>
+            </div>
+            <a routerLink="/mes-reservations" class="planning-link">Voir</a>
+          </div>
+
+          <div class="planning-item">
+            <div class="left">
+              <span class="material-symbols-rounded">celebration</span>
+              <div>
+                <h4>Événement local</h4>
+                <p>{{ planning.evenementLocal }}</p>
+              </div>
+            </div>
+            <a routerLink="/evenements" class="planning-link">Explorer</a>
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- Circuits populaires -->
+      <section class="card popular">
+        <h2 class="section-title">
+          <span class="material-symbols-rounded">local_fire_department</span> Circuits populaires
+        </h2>
+        <div class="popular-list">
+          <div *ngFor="let circuit of tendances" class="popular-card">
+            <img [src]="circuit.image" alt="Circuit populaire"/>
+            <div class="info">
+              <h4>{{ circuit.nom }}</h4>
+              <p>{{ circuit.region }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Objectifs -->
+      <section class="card goals">
+        <h2 class="section-title">
+          <span class="material-symbols-rounded">flag</span> Vos objectifs
+        </h2>
+        <ul>
+          <li *ngFor="let goal of goals">
+            <span class="material-symbols-rounded">check_circle</span> {{ goal }}
+          </li>
+        </ul>
+      </section>
+
+      <!-- Suggestion IA -->
+      <section class="card suggestion">
+        <h2 class="section-title">
+          <span class="material-symbols-rounded">smart_toy</span> Suggestion IA
+        </h2>
+        <button (click)="generateSuggestion()" class="btn-suggestion">Générer une idée</button>
+        <article *ngIf="suggestion" class="suggestion-result">
+          <img [src]="suggestion.image" alt="Suggestion" />
+          <div>
+            <h4>{{ suggestion.nom }}</h4>
+            <p>{{ suggestion.region }}</p>
+            <a [href]="['/circuit', suggestion.id]">Voir le circuit</a>
+          </div>
+        </article>
+      </section>
+
+    </div>
+
+    <!-- Fallback météo -->
+    <ng-template #errorTpl>
+      <div class="card weather-error">
+        <p>
+          <span class="material-symbols-rounded">error</span>
+          Impossible de récupérer les données météo.
+        </p>
+      </div>
+    </ng-template>
+
   </div>
-</div>
+</app-navbar>

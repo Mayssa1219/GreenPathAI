@@ -26,40 +26,104 @@ body {
 }
 
 /* ----------------- NAVBAR ----------------- */
+/* ----------------- NAVBAR ----------------- */
 .site-nav {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 270px; /* largeur normale de la sidebar */
+  right: 0;
+  height: 60px;
   background: var(--surface);
   box-shadow: var(--shadow);
-  padding: 0.8rem 1.2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  z-index: 1000;
+  padding: 0 1.5rem;
+  z-index: 1100;
+  transition: left 0.3s ease;
 }
 
+/* Quand la sidebar est réduite */
+.site-nav.sidebar-collapsed {
+  left: 80px; /* largeur réduite de la sidebar */
+}
+
+
+/* Titre + logo */
 .navbar-title {
   display: flex;
   align-items: center;
+  gap: 0.6rem;
   font-weight: 700;
   font-size: 1.2rem;
   color: var(--primary-dark);
-  gap: 0.6rem;
   text-decoration: none;
 }
 
+/* Cercle du logo */
 .logo-circle {
   background: var(--gradient);
   color: white;
-  width: 2em;
-  height: 2em;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
-  font-weight: 700;
+  font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px #3cb37126;
+  box-shadow: 0 2px 8px #3cb37155;
 }
+
+/* Groupe d'icônes à droite */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* réduit l’espace */
+}
+
+/* Icône de notification */
+.notif-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.notif-icon {
+  font-size: 24px;
+  color: var(--text);
+}
+
+.notif-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: red;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 2px 5px;
+}
+
+/* Avatar utilisateur */
+.profile-container {
+  cursor: pointer;
+}
+
+.profile-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 6px var(--primary);
+}
+
 
 /* ----------------- SIDEBAR ----------------- */
 .sidebar {
@@ -73,14 +137,13 @@ body {
   display: flex;
   flex-direction: column;
   transition: width 0.3s ease, transform 0.3s ease;
-  z-index: 999;
+  z-index: 1000;
 }
 
 .sidebar.collapsed {
   width: 80px;
 }
 
-/* ----------------- SIDEBAR HEADER ----------------- */
 .sidebar-header {
   display: flex;
   align-items: center;
@@ -89,17 +152,6 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
-.sidebar-header .header-logo {
-  font-size: 1rem;
-  font-weight: bold;
-  color: var(--primary-dark);
-}
-
-.sidebar.collapsed .header-logo:not(img) {
-  display: none;
-}
-
-/* ----------------- TOGGLE BUTTON ----------------- */
 .sidebar-toggle {
   background: none;
   border: none;
@@ -107,7 +159,6 @@ body {
   color: var(--primary-dark);
 }
 
-/* ----------------- SEARCH FORM ----------------- */
 .search-form {
   display: flex;
   align-items: center;
@@ -175,7 +226,6 @@ body {
   border-top: 1px solid var(--border);
 }
 
-/* Bouton entier */
 .theme-toggle {
   width: 100%;
   display: flex;
@@ -189,7 +239,6 @@ body {
   transition: background 0.3s;
 }
 
-/* Partie gauche (icone + texte) */
 .theme-toggle-left {
   display: flex;
   align-items: center;
@@ -199,7 +248,6 @@ body {
   color: var(--text);
 }
 
-/* Switch track */
 .theme-toggle-track {
   width: 36px;
   height: 20px;
@@ -209,7 +257,6 @@ body {
   transition: background 0.3s ease;
 }
 
-/* Cercle du switch */
 .theme-toggle-indicator {
   width: 16px;
   height: 16px;
@@ -224,13 +271,14 @@ body {
 .theme-toggle-indicator.active {
   transform: translateX(16px);
 }
+
 .theme-icon {
   font-size: 1.4rem;
   transition: color 0.3s, text-shadow 0.3s;
   filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.1));
   position: relative;
-
 }
+
 .theme-icon::before {
   content: "";
   position: absolute;
@@ -240,16 +288,25 @@ body {
   z-index: -1;
   opacity: 0.6;
 }
+
 .theme-toggle:active .theme-icon {
   transform: rotate(20deg) scale(1.1);
 }
 
+.sidebar.collapsed .theme-toggle-left .theme-text,
+.sidebar.collapsed .theme-toggle-track {
+  display: none;
+}
 
+.sidebar.collapsed .theme-toggle-left {
+  justify-content: center;
+  width: 100%;
+}
 
 /* ----------------- CONTENT ----------------- */
 .container {
   display: flex;
-  margin-top: 60px; /* navbar height */
+  margin-top: 60px;
 }
 
 .main-content {
@@ -265,15 +322,6 @@ body {
   margin-left: 80px;
 }
 
-/* ----------------- TRANSITIONS ----------------- */
-.sidebar,
-.main-content,
-.sidebar-header,
-.menu-link,
-.search-form input {
-  transition: all 0.3s ease;
-}
-
 /* ----------------- RESPONSIVE ----------------- */
 @media (max-width: 768px) {
   .sidebar {
@@ -286,35 +334,15 @@ body {
     transform: translateX(0);
   }
 
-  .main-content {
-    margin-left: 0 !important;
+  .site-nav {
+    left: 0 !important;
   }
 
+  .main-content,
   .sidebar ~ .main-content,
   .sidebar.collapsed ~ .main-content {
     margin-left: 0 !important;
   }
 }
 
-/* ----------------- OPTIONAL DARK THEME ----------------- */
-body.dark-theme {
-  --background: #121212;
-  --surface: #1f1f1f;
-  --surface-contrast: #2c2c2c;
-  --text: #e0e0e0;
-  --text-light: #9e9e9e;
-  --primary-light: #345e4e;
-  --shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
-}
-/* Masquer texte + track dans la version réduite */
-.sidebar.collapsed .theme-toggle-left .theme-text,
-.sidebar.collapsed .theme-toggle-track {
-  display: none;
-}
-
-/* Centrer uniquement l’icône dans la version réduite */
-.sidebar.collapsed .theme-toggle-left {
-  justify-content: center;
-  width: 100%;
-}
 

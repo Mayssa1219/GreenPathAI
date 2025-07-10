@@ -94,6 +94,7 @@ export class SignupComponent {
     { label: 'Gastronomie', value: 'gastronomie' },
     { label: 'Sport', value: 'sport' },
     { label: 'Bien-être', value: 'bien-etre' }
+
   ];
   locationPreview = '';
 

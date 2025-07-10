@@ -318,3 +318,103 @@ a:hover, a:focus {
     gap: 1.5em;
   }
 }
+
+body.dark-theme .weather {
+  background: linear-gradient(135deg, #1e1f24, #2a2b30);
+  color: #b0d9c2;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+}
+
+body.dark-theme .weather.weather-clear {
+  background: linear-gradient(to top right, #56550f, #7b700e);
+  color: #f6e27c;
+}
+
+body.dark-theme .weather.weather-clouds {
+  background: linear-gradient(to right, #3c4148, #585e67);
+  color: #c1c7d0;
+}
+
+body.dark-theme .weather.weather-rain {
+  background: linear-gradient(to right, #1f2a38, #3a4657);
+  color: #a0b9c7;
+}
+
+body.dark-theme .weather.weather-snow {
+  background: linear-gradient(to top, #2e3b47, #45505c);
+  color: #d7e6f0;
+}
+
+body.dark-theme .weather.weather-thunderstorm {
+  background: radial-gradient(circle at center, #111314, #1f2124);
+  color: #a5c9ff;
+}
+
+body.dark-theme .weather.weather-drizzle {
+  background: linear-gradient(to right, #274760, #3a5774);
+  color: #9cc6e7;
+}
+
+body.dark-theme .weather-temp-info .main-temp {
+  color: var(--primary);
+  text-shadow: 0 0 6px var(--primary);
+}
+
+body.dark-theme .detail-item {
+  background: #22252a;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  color: var(--text);
+}
+
+body.dark-theme .detail-item span {
+  color: var(--primary);
+}
+
+body.dark-theme .planning {
+  background: linear-gradient(135deg, #22262b, #2f3237);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+  color: #a8c6b9;
+}
+
+body.dark-theme .planning::before {
+  background: linear-gradient(to right, var(--primary), var(--accent));
+}
+
+body.dark-theme .planning h3 {
+  color: var(--primary);
+}
+
+body.dark-theme .planning-info {
+  color: #bcd9ca;
+}
+
+body.dark-theme .planning-item {
+  background: #1e2226;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.8);
+  color: var(--text);
+}
+
+body.dark-theme .planning-item:hover {
+  background: #2b2f34;
+  transform: scale(1.02);
+}
+
+body.dark-theme .planning-item .left span {
+  color: var(--primary);
+}
+
+body.dark-theme .planning-item .right {
+  color: var(--accent);
+}
+/* 🌙 Mode sombre */
+body.dark-theme .eco-score-widget {
+  background-color: #1f2d21;
+}
+
+body.dark-theme .eco-score-value {
+  color: #a5d6a7;
+}
+
+body.dark-theme .eco-score-bar {
+  background-color: #3a4d3d;
+}
