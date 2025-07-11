@@ -5,10 +5,18 @@
 <div class="app-layout">
   <!-- Navbar -->
   <nav class="site-nav" [class.sidebar-collapsed]="collapsed">
-    <a routerLink="/" class="navbar-title">
+    <div class="navbar-title">
       <span class="logo-circle">G</span>
       <span class="brand-name">GreenPathAI</span>
-    </a>
+
+      <!-- 🔇 Bouton d'arrêt de la voix à côté du logo -->
+      <span
+        class="material-symbols-rounded stop-voice-icon speak-icon"
+        (click)="stopVoice()"
+        title="Arrêter la lecture vocale">
+      volume_off
+    </span>
+    </div>
 
     <div class="navbar-right">
       <div class="notif-container" (click)="toggleNotifications()" title="Voir les notifications">
@@ -20,8 +28,6 @@
       </div>
     </div>
   </nav>
-
-
 
   <!-- Sidebar + Main -->
   <div class="container">

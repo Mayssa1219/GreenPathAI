@@ -3,7 +3,7 @@ import {Client} from '../../../models/client';
 import {ClientService} from '../../../Services/ClientService';
 import {CommonModule, NgIf} from '@angular/common';
 import {Router, RouterModule} from '@angular/router';
-
+import {VoiceService} from '../../../Services/VoiceService';
 @Component({
   selector: 'app-navbar',
   standalone: true,
@@ -14,6 +14,17 @@ import {Router, RouterModule} from '@angular/router';
 export class NavbarComponent implements OnInit {
   collapsed = true;
   isDarkTheme = false;
+  private stopTimeout: any = null;
+
+  stopVoice() {
+    if (this.stopTimeout) return;  // Ignore clics rapides
+
+    this.voiceService.cancel();
+
+    this.stopTimeout = setTimeout(() => {
+      this.stopTimeout = null; // Réactive le bouton après 500ms
+    }, 500);
+  }
   logout(): void {
     localStorage.removeItem('token');
     this.router.navigate(['/login']);
@@ -49,7 +60,8 @@ export class NavbarComponent implements OnInit {
   photoUrl = 'default-avatar.png';
   constructor(
     private clientService: ClientService,
-    private router:Router
+    private router:Router,
+    private voiceService: VoiceService
   ) {
 
   }

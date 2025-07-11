@@ -1,1 +1,6 @@
+<div *ngIf="loaderService.loading$ | async" class="loading-overlay">
+  <!-- Ton loader animé ici -->
+  <app-loading></app-loading>
+</div>
+
 <router-outlet></router-outlet>

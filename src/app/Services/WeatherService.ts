@@ -17,13 +17,13 @@ interface WeatherData {
 })
 export class WeatherService {
   private apiKey = '91ce8357749464099b4d6b168122384d'; //
-  private apiUrl = 'https://api.openweathermap.org/data/2.5/weather';
+  private apiUrl = '/weather-api/data/2.5/weather';
   private cacheKey = 'cachedWeather';
 
   constructor(private http: HttpClient) {}
 
   getWeather(city: string): Observable<WeatherData | null> {
-    const cacheKey = `weather_${city.toLowerCase()}`;
+    const cacheKey = `weather_${city.toLowerCase()}`; // Clé de cache unique par ville
     const cached = localStorage.getItem(cacheKey);
 
     if (cached) {
@@ -33,7 +33,7 @@ export class WeatherService {
         const cacheDuration = 30 * 60 * 1000; // 30 minutes
 
         if (now - cachedData.timestamp < cacheDuration) {
-          return of(cachedData.data);
+          return of(cachedData.data); // Retourne le cache valide
         }
       } catch (e) {
         console.warn('Cache météo invalide, suppression…');
@@ -41,7 +41,8 @@ export class WeatherService {
       }
     }
 
-    const url = `/weather-api/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${this.apiKey}&units=metric&lang=fr`;
+    // Requête API si pas de cache ou expiré
+    const url = `${this.apiUrl}?q=${encodeURIComponent(city)}&appid=${this.apiKey}&units=metric&lang=fr`;
 
     return this.http.get<WeatherData>(url).pipe(
       tap(data => {
@@ -56,6 +57,5 @@ export class WeatherService {
       })
     );
   }
-
 
 }

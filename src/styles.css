@@ -414,6 +414,23 @@ body.dark-theme .eco-score-widget {
 body.dark-theme .eco-score-value {
   color: #a5d6a7;
 }
+/* ------------------ THÈME SOMBRE ------------------ */
+body.dark-theme .speak-icon {
+  color: #a2cfff; /* bleu clair sur fond sombre */
+}
+
+body.dark-theme .speak-icon:hover {
+  color: #9af3c9; /* vert clair au survol */
+}
+@media (prefers-color-scheme: dark) {
+  .speak-icon {
+    color: #a2cfff;
+  }
+
+  .speak-icon:hover {
+    color: #9af3c9;
+  }
+}
 
 body.dark-theme .eco-score-bar {
   background-color: #3a4d3d;

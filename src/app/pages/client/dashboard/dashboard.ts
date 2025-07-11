@@ -1,4 +1,4 @@
-import {AfterContentInit, AfterViewInit, Component, OnInit} from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar';
 import { CommonModule } from '@angular/common';
 import { WeatherService } from '../../../Services/WeatherService';
@@ -6,25 +6,25 @@ import flatpickr from 'flatpickr';
 import { ClientService } from '../../../Services/ClientService';
 import { Client } from '../../../models/client';
 import { GeolocalisationService } from '../../../Services/GeolocalisationService';
+import { VoiceService } from '../../../Services/VoiceService';
 
 @Component({
   selector: 'app-dashboard',
+  standalone: true,
   imports: [NavbarComponent, CommonModule],
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css'],
-  standalone: true
+  styleUrls: ['./dashboard.css']
 })
-export class DashboardComponent implements OnInit,AfterViewInit  {
-  username = 'Utilisateur';
+export class DashboardComponent implements OnInit, AfterViewInit {
+  username = 'Cher client';
   email = '';
   userId = '';
   clientData: Client | null = null;
 
   weather: any = null;
   weatherError = false;
-  photoUrl = 'assets/default-avatar.png';
+  photoUrl = 'default-avatar.png';
 
-  // ✅ ASTUCE
   greenTips: string[] = [
     "Éteins les lumières inutiles.",
     "Prends une douche plus courte.",
@@ -38,8 +38,48 @@ export class DashboardComponent implements OnInit,AfterViewInit  {
     "Marche ou pédale pour les trajets courts."
   ];
   greenTip: string = '';
+  private highlightTimeouts: any[] = [];
+  highlightedWords: string[] = [];
+  startHighlightReading(): void {
+    const words = this.greenTip.split(' ');
+    this.highlightedWords = [];
 
-  // ✅ STATS DÉMO (ecoScore sera mis à jour dynamiquement)
+    // Annule d'éventuels timers précédents
+    this.clearHighlightTimeouts();
+
+    this.voice.cancel();
+    this.voice.speak(`Astuce verte du jour : ${this.greenTip}`);
+
+    words.forEach((word, index) => {
+      const t = setTimeout(() => {
+        this.highlightedWords = words.map((w, i) =>
+          i === index ? `<mark>${w}</mark>` : w
+        );
+      }, index * 400);
+      this.highlightTimeouts.push(t);
+    });
+
+    // Timer pour remettre à zéro
+    const endT = setTimeout(() => {
+      this.clearHighlightTimeouts();
+      this.highlightedWords = [];
+    }, words.length * 450 + 800);
+    this.highlightTimeouts.push(endT);
+  }
+
+  private clearHighlightTimeouts(): void {
+    this.highlightTimeouts.forEach(t => clearTimeout(t));
+    this.highlightTimeouts = [];
+  }
+
+  stopVoice(): void {
+    // 1) Annule la lecture vocale
+    this.voice.cancel();
+    // 2) Annule tous les timers de surbrillance
+    this.clearHighlightTimeouts();
+    // 3) Réinitialise le texte (retire toute surbrillance)
+    this.highlightedWords = [];
+  }
   stats = {
     circuits: 8,
     suggestions: 15,
@@ -48,9 +88,7 @@ export class DashboardComponent implements OnInit,AfterViewInit  {
     ecoScore: 0
   };
 
-  // ✅ Autres données UI
   suggestion: any = null;
-
   tendances = [
     { nom: 'Cap Bon', region: 'Nabeul', image: 'assets/capbon.jpg' },
     { nom: 'Ichkeul', region: 'Bizerte', image: 'assets/ichkeul.jpg' },
@@ -70,7 +108,7 @@ export class DashboardComponent implements OnInit,AfterViewInit  {
 
   upcomingEvents = [
     { message: "Atelier écoresponsable à Sousse", date: new Date("2025-07-12") },
-    { message: "Visite guidée de la Médina", date: new Date("2025-07-15") },
+    { message: "Visite guidée de la Médina", date: new Date("2025-07-15") }
   ];
 
   showToast = false;
@@ -79,17 +117,9 @@ export class DashboardComponent implements OnInit,AfterViewInit  {
   constructor(
     private weatherService: WeatherService,
     private clientService: ClientService,
-    private geolocService: GeolocalisationService
+    private geolocService: GeolocalisationService,
+    public voice: VoiceService
   ) {}
-  ngAfterViewInit() {
-    // Petite pause pour déclencher l’animation proprement
-    setTimeout(() => {
-      const fill = document.querySelector('.eco-progress-fill') as HTMLElement;
-      if (fill) {
-        fill.style.setProperty('--score-width', `${this.stats.ecoScore}%`);
-      }
-    }, 200);
-  }
 
   ngOnInit() {
     const decoded = this.clientService.decodeToken();
@@ -103,76 +133,63 @@ export class DashboardComponent implements OnInit,AfterViewInit  {
           this.clientData = client;
           this.username = client.fullname || `${client.prenom} ${client.nom}` || 'Utilisateur';
           this.email = client.email;
-          this.photoUrl = client.photoUrl || 'assets/default-avatar.png';
-
-          // Une fois qu'on a l'id, on charge le score éco
+          this.photoUrl = client.photoUrl || 'default-avatar.png';
           this.loadEcoScore();
         },
-        error: (err) => {
-          console.error('Erreur récupération client:', err);
-        }
+        error: (err) => console.error('Erreur récupération client:', err)
       });
     }
 
-    // Géolocalisation + météo
     this.geolocService.getPosition()
-      .then(position => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        return this.geolocService.getCityFromCoords(lat, lon);
-      })
-      .then(city => {
-        this.getWeather(city);
-      })
-      .catch(() => {
-        this.getWeather('Tunis'); // fallback
-      });
+      .then(position => this.geolocService.getCityFromCoords(position.coords.latitude, position.coords.longitude))
+      .then(city => this.getWeather(city || 'Tunisie'))
+      .catch(() => this.getWeather('Tunisie'));
 
-    // Flatpickr init
     flatpickr("#datepicker", {
       minDate: "today",
       locale: "fr",
     });
 
-    // Toast de bienvenue
     setTimeout(() => {
-      this.triggerToast(`🌱 Bienvenue sur votre tableau de bord, ${this.username} ! Découvrez les dernières tendances écoresponsables et vos statistiques personnalisées.`);
+      this.triggerToast(`Bienvenue sur votre tableau de bord, ${this.username} ! Découvrez les dernières tendances écoresponsables et vos statistiques personnalisées.`);
     }, 5000);
 
     this.selectTipOfTheDay();
   }
 
-  // ✅ MÉTHODES
-
-  loadEcoScore(): void {
-    if (!this.userId) return;
-    this.clientService.getEcoScore(Number(this.userId)).subscribe({
-      next: (score: number) => {
-        this.stats.ecoScore = score;
-      },
-      error: (err) => {
-        console.error('Erreur récupération ecoScore:', err);
-        this.stats.ecoScore = 0;
+  ngAfterViewInit() {
+    setTimeout(() => {
+      const fill = document.querySelector('.eco-progress-fill') as HTMLElement;
+      if (fill) {
+        fill.style.setProperty('--score-width', `${this.stats.ecoScore}%`);
       }
-    });
-  }
-  getEcoColor(score: number): string {
-    if (score >= 80) return '#4CAF50'; // Vert
-    if (score >= 50) return '#FFC107'; // Jaune
-    return '#F44336'; // Rouge
-  }
-  getEcoTooltip(score: number): string {
-    if (score >= 20) return "Excellent niveau d’écoresponsabilité 🌿";
-    if (score >= 10) return "Bon début, continuez à faire des choix durables 🌱";
-    return "Niveau faible — essayez d’adopter plus de pratiques écologiques 🍃";
+    }, 200);
   }
 
-  getEcoLevel(score: number): string {
-    if (score >= 20) return 'Élevé';
-    if (score >= 10) return 'Moyen';
-    return 'Faible';
+  // ===== 🌿 ASTUCE ÉCO =====
+  selectTipOfTheDay(): void {
+    const today = new Date();
+    const dayKey = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+    let hash = 0;
+    for (let i = 0; i < dayKey.length; i++) {
+      hash = dayKey.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % this.greenTips.length;
+    this.greenTip = this.greenTips[index];
+
+    this.voice.speak(`Astuce verte du jour : ${this.greenTip}`);
+  }
+  generateSuggestion() {
+    this.suggestion = {
+      id: 42,
+      nom: 'Djerba Eco-Tour',
+      region: 'Medenine',
+      image: 'public/djerba.jpg'
+    };
   }
 
+
+  // ===== METEO =====
   getWeather(city: string) {
     this.weatherService.getWeather(city).subscribe(data => {
       if (data) {
@@ -184,35 +201,42 @@ export class DashboardComponent implements OnInit,AfterViewInit  {
     });
   }
 
-  generateSuggestion() {
-    this.suggestion = {
-      id: 42,
-      nom: 'Djerba Eco-Tour',
-      region: 'Medenine',
-      image: 'public/djerba.jpg'
-    };
+  // ===== SCORE =====
+  loadEcoScore(): void {
+    if (!this.userId) return;
+    this.clientService.getEcoScore(Number(this.userId)).subscribe({
+      next: (score: number) => this.stats.ecoScore = score,
+      error: () => this.stats.ecoScore = 0
+    });
   }
 
+  getEcoColor(score: number): string {
+    if (score >= 80) return '#4CAF50';
+    if (score >= 50) return '#FFC107';
+    return '#F44336';
+  }
+
+  getEcoLevel(score: number): string {
+    if (score >= 20) return 'Élevé';
+    if (score >= 10) return 'Moyen';
+    return 'Faible';
+  }
+
+  getEcoTooltip(score: number): string {
+    if (score >= 20) return "Excellent niveau d’écoresponsabilité 🌿";
+    if (score >= 10) return "Bon début, continuez à faire des choix durables 🌱";
+    return "Niveau faible — essayez d’adopter plus de pratiques écologiques 🍃";
+  }
+
+  // ===== TOAST =====
   triggerToast(message: string) {
     this.toastMessage = message;
     this.showToast = true;
+    this.voice.speak(message);
     setTimeout(() => this.showToast = false, 6000);
   }
-
   closeToast() {
     this.showToast = false;
-  }
-
-  selectTipOfTheDay(): void {
-    const today = new Date();
-    const dayKey = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
-
-    let hash = 0;
-    for (let i = 0; i < dayKey.length; i++) {
-      hash = dayKey.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    const index = Math.abs(hash) % this.greenTips.length;
-    this.greenTip = this.greenTips[index];
+    this.stopVoice()
   }
 }

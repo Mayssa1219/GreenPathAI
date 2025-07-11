@@ -1,0 +1,89 @@
+body {
+  background-color: #f0f4f8; /* fond très clair bleu pâle */
+  margin: 0;
+  font-family: 'PT Sans Narrow', sans-serif;
+}
+
+#loading-wrapper {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: rgba(240, 244, 248, 0.95); /* fond clair presque opaque */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+#loading-logo {
+  width: 140px;
+  height: auto;
+  margin-bottom: 30px;
+  filter: drop-shadow(0 0 6px#3cb371); /* douce lueur vert clair */
+}
+
+#loading-content {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  border: 4px solid transparent;
+  border-top-color: #3cb371;  /* vert clair doux */
+  border-bottom-color: #3cb371;
+  border-radius: 50%;
+  animation: loader 2s linear infinite;
+}
+
+#loading-content:before,
+#loading-content:after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  border: 4px solid transparent;
+}
+
+#loading-content:before {
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  border-top-color: #a3c4f3; /* bleu pastel clair */
+  border-bottom-color: #a3c4f3;
+  animation: loader 3s linear infinite;
+}
+
+#loading-content:after {
+  top: 35px;
+  left: 35px;
+  right: 35px;
+  bottom: 35px;
+  border-top-color: #658dcf; /* bleu moyen doux */
+  border-bottom-color: #658dcf;
+  animation: loader 1.5s linear infinite;
+}
+
+
+#loading-text {
+  position: relative; /* en flux normal pour être au-dessus du loader */
+  margin-bottom: 30px; /* espace avec le spinner */
+  font-family: 'PT Sans Narrow', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #2a5d37; /* vert foncé bien lisible */
+  text-align: center;
+  text-shadow: 0 0 6px rgba(42, 93, 55, 0.6); /* ombre douce verte */
+  user-select: none; /* empêcher la sélection du texte lors d'un clic */
+}
+
+
+
+@keyframes loader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

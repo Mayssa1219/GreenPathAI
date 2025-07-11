@@ -41,11 +41,20 @@
 
       <!-- Partie droite : astuce verte -->
       <div class="welcome-tip">
-        <section class="card tip">
-          <h2>
-             Astuce du jour
-          </h2>
-          <blockquote>"{{ greenTip }}"</blockquote>
+        <section class="card tip" aria-labelledby="tip-title">
+          <h2 id="tip-title">🌱 Astuce du jour</h2>
+
+          <blockquote [innerHTML]="highlightedWords.length ? highlightedWords.join(' ') : greenTip"
+                      aria-live="polite"
+                      aria-atomic="true">
+          </blockquote>
+
+          <button class="green-btn"
+                  [class.playing]="voice.isSpeaking$ | async"
+                  (click)="startHighlightReading()"
+                  aria-label="Écouter l’astuce du jour">
+            🔊 Écouter l’astuce
+          </button>
         </section>
       </div>
     </header>

@@ -123,6 +123,22 @@ body {
   transform: scale(1.1);
   box-shadow: 0 0 6px var(--primary);
 }
+/* ------------------ THÈME CLAIR ------------------ */
+.speak-icon {
+  font-size: 20px;
+  color: var(--accent-dark); /* bleu sombre */
+  margin-left: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.speak-icon:hover {
+  transform: scale(1.2);
+  color: var(--primary-dark); /* vert foncé */
+}
+
+
+
 
 
 /* ----------------- SIDEBAR ----------------- */

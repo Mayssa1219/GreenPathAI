@@ -905,6 +905,54 @@ body.dark-theme .planning-item .left {
   overflow: hidden;
 }
 
+.green-btn {
+  position: relative;
+  margin-top: 12px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: inherit;
+  transition: background-color 0.3s;
+}
+
+.green-btn:hover {
+  background-color: #3ea945;
+}
+
+.green-btn.playing::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  border-radius: 12px;
+  border: 2px solid #4CAF50;
+  animation: pulse 1s infinite ease-in-out;
+  z-index: -1;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+blockquote mark {
+  background-color: #e6ffe6;
+  border-radius: 4px;
+  padding: 0 3px;
+}
+
 
 .eco-score-fill {
   height: 100%;
@@ -921,4 +969,5 @@ body.dark-theme .planning-item .left {
     width: var(--score-width, 100%);
   }
 }
+
 
