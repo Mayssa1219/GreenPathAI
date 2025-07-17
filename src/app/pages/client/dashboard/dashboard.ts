@@ -1,29 +1,35 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import {Component, OnInit, AfterViewInit, AfterContentInit, OnDestroy} from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar';
-import { CommonModule } from '@angular/common';
+import {CommonModule, NgFor} from '@angular/common';
 import { WeatherService } from '../../../Services/WeatherService';
 import flatpickr from 'flatpickr';
 import { ClientService } from '../../../Services/ClientService';
 import { Client } from '../../../models/client';
 import { GeolocalisationService } from '../../../Services/GeolocalisationService';
 import { VoiceService } from '../../../Services/VoiceService';
-
+import { CircuitService } from '../../../Services/CircuitService';
+import {Circuit} from '../../../models/Circuit';
+import {firstValueFrom} from 'rxjs';
+import {SuggestionIAService} from '../../../Services/SuggestionIAService';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NavbarComponent, CommonModule],
+  imports: [NavbarComponent, CommonModule,NgFor],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
-export class DashboardComponent implements OnInit, AfterViewInit {
+export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
   username = 'Cher client';
   email = '';
   userId = '';
   clientData: Client | null = null;
-
+  circuitsMeteo: Circuit[] = [];
+  weatherCondition: string = '';
   weather: any = null;
   weatherError = false;
   photoUrl = 'default-avatar.png';
+  weatherDescriptionLogique = '';
+
 
   greenTips: string[] = [
     "Éteins les lumières inutiles.",
@@ -81,10 +87,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.highlightedWords = [];
   }
   stats = {
-    circuits: 8,
-    suggestions: 15,
-    favoris: 6,
-    lastActivity: '04 Juillet 2025',
+    circuits: 0,
+    suggestions: 0,
+    favoris: 0,
+    lastActivity: '',
     ecoScore: 0
   };
 
@@ -118,8 +124,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     private weatherService: WeatherService,
     private clientService: ClientService,
     private geolocService: GeolocalisationService,
-    public voice: VoiceService
-  ) {}
+    public voice: VoiceService,
+    private circuitService: CircuitService,
+    private suggestionService:SuggestionIAService
+) {}
 
   ngOnInit() {
     const decoded = this.clientService.decodeToken();
@@ -140,21 +148,87 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       });
     }
 
+    //position pour météo
     this.geolocService.getPosition()
-      .then(position => this.geolocService.getCityFromCoords(position.coords.latitude, position.coords.longitude))
-      .then(city => this.getWeather(city || 'Tunisie'))
-      .catch(() => this.getWeather('Tunisie'));
+      .then(position => {
+        const { latitude, longitude } = position.coords;
+        return this.geolocService.getCityFromCoords(latitude, longitude);
+      })
+      .then(city => {
+        const selectedCity = city || 'Tunis';
 
+        // Appelle les deux observables en parallèle
+        this.getWeather(selectedCity); // Méthode déjà existante qui charge les données météo
+
+        this.weatherService.getWeatherDescriptionLogique(selectedCity).subscribe(desc => {
+          this.weatherDescriptionLogique = desc;
+        });
+      })
+      .catch(err => {
+        console.warn('Erreur géoloc, fallback sur Tunisie', err);
+
+        this.getWeather('Tunisie');
+
+        this.weatherService.getWeatherDescriptionLogique('Tunisie').subscribe(desc => {
+          this.weatherDescriptionLogique = desc;
+        });
+      });
+
+
+// charger les circuits adaptés au météo
+    this.loadCircuitsByMeteo();
+    this.circuitService.countFavoris(Number(this.userId)).subscribe({
+      next: (count) => this.stats.favoris = count,
+      error: (err) => console.error('Erreur comptage favoris :', err)
+    });
     flatpickr("#datepicker", {
       minDate: "today",
       locale: "fr",
     });
+    this.circuitService.countCircuitsValides().subscribe({
+      next: (count: number) => this.stats.circuits = count,
+      error: (err) => console.error('Erreur comptage circuits :', err)
+    });
+    this.suggestionService.countSuggestions().subscribe({
+      next: (count: number) => {
+        this.stats.suggestions = count;
+      },
+      error: (err) => {
+        console.error('Erreur récupération suggestions IA :', err);
+      }
+    });
+
+    this.startAutoSlide();
+    this.clientService.getLastActivity(Number(this.userId)).subscribe({
+      next: activityDate => {
+        if (activityDate) {
+          this.stats.lastActivity = activityDate;
+        } else {
+          this.stats.lastActivity = "Aucune activité enregistrée";
+        }
+      },
+      error: err => {
+        if (err.status === 204) {
+          this.stats.lastActivity = "Aucune activité enregistrée";
+        } else {
+          console.error("Erreur lors de la récupération :", err);
+          this.stats.lastActivity = "Erreur serveur";
+        }
+      }
+    });
+
 
     setTimeout(() => {
       this.triggerToast(`Bienvenue sur votre tableau de bord, ${this.username} ! Découvrez les dernières tendances écoresponsables et vos statistiques personnalisées.`);
     }, 5000);
 
     this.selectTipOfTheDay();
+  }
+  getEtapesArray(etapesString?: string): string[] {
+    return etapesString
+      ?.split(/Étape\s*\d+:/)
+      .map(e => e.trim())
+      .filter(e => e.length > 0) || [];
   }
 
   ngAfterViewInit() {
@@ -190,16 +264,32 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
 
   // ===== METEO =====
-  getWeather(city: string) {
-    this.weatherService.getWeather(city).subscribe(data => {
-      if (data) {
-        this.weather = data;
-        this.weatherError = false;
-      } else {
+  getWeather(city: string): void {
+    this.weatherService.getWeather(city).subscribe({
+      next: (data) => {
+        if (data && data.weather && data.main) {
+          this.weather = data;
+          this.weatherError = false;
+
+          // Récupération de la description logique basée sur la ville
+          this.weatherService.getWeatherDescriptionLogique(city).subscribe(desc => {
+            this.weatherDescriptionLogique = desc;
+            this.setWeatherCssClassFromDescription(desc); // Mets à jour la classe CSS selon ta description logique
+          });
+
+        } else {
+          console.warn('⛅ Données météo incomplètes pour', city, data);
+          this.weatherError = true;
+        }
+      },
+      error: (err) => {
+        console.error('❌ Erreur lors de la récupération météo pour', city, err);
         this.weatherError = true;
       }
     });
   }
+
+
 
   // ===== SCORE =====
   loadEcoScore(): void {
@@ -239,4 +329,79 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.showToast = false;
     this.stopVoice()
   }
+  currentIndex = 0;
+  intervalId: any;
+
+
+
+  ngOnDestroy() {
+    clearInterval(this.intervalId);
+  }
+
+  startAutoSlide() {
+    this.intervalId = setInterval(() => {
+      this.nextSlide();
+    }, 5000); // change toutes les 5 sec
+  }
+
+  nextSlide() {
+    if (!this.circuitsMeteo) return;
+    this.currentIndex = (this.currentIndex + 1) % this.circuitsMeteo.length;
+  }
+
+  prevSlide() {
+    if (!this.circuitsMeteo) return;
+    this.currentIndex = (this.currentIndex - 1 + this.circuitsMeteo.length) % this.circuitsMeteo.length;
+  }
+
+  goToSlide(index: number) {
+    this.currentIndex = index;
+  }
+  async loadCircuitsByMeteo() {
+    try {
+      const position = await this.geolocService.getPosition();
+      const { latitude, longitude } = position.coords;
+
+      const city = await this.geolocService.getCityFromCoords(latitude, longitude);
+      const selectedCity = city || 'Tunisie';
+
+      const condition = await firstValueFrom(this.weatherService.getWeatherCondition(selectedCity));
+      this.weatherCondition = condition;
+
+      this.circuitService.getCircuitsByMeteo(condition).subscribe(circuits => {
+        this.circuitsMeteo = circuits;
+      });
+
+    } catch (err) {
+      console.error('Erreur géolocalisation ou météo :', err);
+      this.getWeather('Tunisie'); // fallback
+    }
+  }
+  weatherCssClass = '';
+
+  setWeatherCssClassFromDescription(description: string) {
+    const desc = description.toLowerCase();
+
+    if (desc.includes('pluie')) {
+      this.weatherCssClass = 'weather weather-rain';
+    } else if (desc.includes('canicule') || desc.includes('très chaud') || desc.includes('chaud')) {
+      this.weatherCssClass = 'weather weather-clear';  // soleil chaud
+    } else if (desc.includes('ciel dégagé')) {
+      this.weatherCssClass = 'weather weather-clear';
+    } else if (desc.includes('nuageux')) {
+      this.weatherCssClass = 'weather weather-clouds';
+    } else if (desc.includes('neige')) {
+      this.weatherCssClass = 'weather weather-snow';
+    } else if (desc.includes('orage') || desc.includes('tonnerre')) {
+      this.weatherCssClass = 'weather weather-thunderstorm';
+    } else if (desc.includes('bruine')) {
+      this.weatherCssClass = 'weather weather-drizzle';
+    } else if (desc.includes('froid') || desc.includes('frais')) {
+      this.weatherCssClass = 'weather weather-clouds'; // tu peux créer une autre classe si tu veux
+    } else {
+      this.weatherCssClass = 'weather'; // style neutre par défaut
+    }
+  }
+
+
 }

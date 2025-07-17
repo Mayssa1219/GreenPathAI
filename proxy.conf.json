@@ -6,6 +6,23 @@
     "pathRewrite": {
       "^/weather-api": ""
     }
+  },
+  "/nominatim": {
+    "target": "https://nominatim.openstreetmap.org",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/nominatim": ""
+    },
+    "headers": {
+      "User-Agent": "GreenPathAI/1.0 (contact@tonsite.tn)"
+    }
+  },
+  "/api": {
+    "target": "http://localhost:8081",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
   }
 }
-

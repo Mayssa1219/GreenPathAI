@@ -138,8 +138,20 @@ body {
 }
 
 
-
-
+.notification-panel {
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  width: 360px;
+  max-height: 500px;
+  overflow-y: auto;
+  background: #f6fff9;
+  border: 1px solid #b7e4cc;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 128, 96, 0.2);
+  z-index: 1000;
+  padding: 16px;
+}
 
 /* ----------------- SIDEBAR ----------------- */
 .sidebar {

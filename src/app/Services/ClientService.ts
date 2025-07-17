@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
+import {map, Observable, of, throwError} from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import {Client} from '../models/client';
+import {catchError} from 'rxjs/operators';
 
 interface DecodedToken {
   sub: string;
@@ -61,15 +62,20 @@ export class ClientService {
     };
   }
 
-  // ❌ Déconnexion
   logout(): void {
     localStorage.removeItem('token');
   }
 
-  // ⚙️ Autres méthodes personnalisées
-  getClientReservations(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${id}/reservations`, this.getAuthHeaders());
+  getLastActivity(clientId: number): Observable<string> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.get<string>(
+      `http://localhost:8081/historique/derniere-activite/${clientId}`,
+      { headers, responseType: 'text' as 'json' } // important !
+    );
   }
+
 
   getEcoScore(id: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/ecoresponsable/${id}`, this.getAuthHeaders());

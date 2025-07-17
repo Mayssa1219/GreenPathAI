@@ -4,10 +4,11 @@ import {ClientService} from '../../../Services/ClientService';
 import {CommonModule, NgIf} from '@angular/common';
 import {Router, RouterModule} from '@angular/router';
 import {VoiceService} from '../../../Services/VoiceService';
+import {NotificationsComponent} from '../notifications/notifications';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, NgIf],
+  imports: [CommonModule, NgIf,NotificationsComponent],
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.css'],
 })
@@ -34,10 +35,6 @@ export class NavbarComponent implements OnInit {
   }
   unreadCount = 3; // 🔴 à mettre à jour dynamiquement selon tes données
 
-  toggleNotifications() {
-    // Par exemple : ouvrir une fenêtre latérale, ou naviguer vers /notifications
-    console.log("Notifications cliquées !");
-  }
   toggleTheme(): void {
     this.isDarkTheme = !this.isDarkTheme;
     this.applyTheme();
@@ -95,5 +92,11 @@ export class NavbarComponent implements OnInit {
         }
       });
     }}
+  showNotifications = false;
+  notifCount = 0;
+
+  toggleNotifications() {
+    this.showNotifications = !this.showNotifications;
+  }
 
 }

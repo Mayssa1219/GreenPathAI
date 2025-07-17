@@ -5,7 +5,7 @@ import {CommonModule, NgIf} from '@angular/common';
 @Component({
   selector: 'app-loading',
   standalone: true,
-  imports: [NgIf,CommonModule],
+  imports: [CommonModule],
   templateUrl: './loading.html',
   styleUrl: './loading.css'
 })

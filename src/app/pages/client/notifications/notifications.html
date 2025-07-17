@@ -1,0 +1,34 @@
+<section class="notification-center">
+  <div class="notif-panel-header">
+    <h3>🔔 Notifications</h3>
+    <button (click)="closePanel.emit()" class="close-btn" aria-label="Fermer le panneau de notifications">×</button>
+  </div>
+
+  <!-- Onglets -->
+  <div class="tabs">
+    <button [class.active]="activeTab === 'all'" (click)="setTab('all')">Tous</button>
+    <button [class.active]="activeTab === 'unread'" (click)="setTab('unread')">Non lus</button>
+    <button [class.active]="activeTab === 'important'" (click)="setTab('important')">Importants</button>
+  </div>
+
+  <div *ngIf="loading">Chargement...</div>
+
+  <ul class="notification-list" *ngIf="!loading && filteredNotifications.length > 0">
+    <li
+      *ngFor="let notif of filteredNotifications"
+      [class.unread]="!notif.read"
+      (click)="markAsRead(notif)"
+      [@fadeIn]>
+      <div class="notif-header">
+        <strong>{{ notif.title }}</strong>
+        <span class="notif-type">{{ notif.type }}</span>
+      </div>
+      <p>{{ notif.description }}</p>
+      <small>{{ notif.timestamp && (notif.timestamp | date:'short') }}</small>
+    </li>
+  </ul>
+
+  <div *ngIf="!loading && filteredNotifications.length === 0">
+    🎉 Aucune notification pour cet onglet.
+  </div>
+</section>

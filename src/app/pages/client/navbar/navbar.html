@@ -28,7 +28,11 @@
       </div>
     </div>
   </nav>
-
+  <app-notifications
+    *ngIf="showNotifications"
+    class="notification-panel"
+    (closePanel)="showNotifications = false">
+  </app-notifications>
   <!-- Sidebar + Main -->
   <div class="container">
     <!-- Sidebar -->

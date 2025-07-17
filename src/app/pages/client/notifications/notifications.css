@@ -1,0 +1,148 @@
+/* ✅ En-tête moderne du panneau */
+.notif-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #ffffffcc; /* blanc semi-transparent */
+  backdrop-filter: blur(12px);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  color: #222;
+}
+
+.notif-panel-header h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ❌ Bouton fermer moderne */
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #555;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.close-btn:hover {
+  transform: rotate(90deg);
+  color: #e57373;
+}
+
+/* 📦 Conteneur principal */
+.notification-center {
+  background: #f9fcfb;
+  padding: 2rem;
+  border-radius: 16px;
+  max-width: 700px;
+  margin: 2rem auto;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.05);
+}
+
+.notification-center h2 {
+  font-size: 1.75rem;
+  color: #2e7d64;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.badge {
+  background: #e53935;
+  color: white;
+  font-weight: 600;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  border-radius: 12px;
+}
+
+/* 🔘 Onglets simplifiés */
+.tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid #d0ebe1;
+  background: #eafaf5;
+  color: #1a5d4c;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+.tabs button.active {
+  background: #34a853;
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 2px 6px rgba(52, 168, 83, 0.3);
+}
+
+/* 📬 Notifications */
+.notification-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-list li {
+  background: #ffffff;
+  border-left: 4px solid #34a853;
+  border-radius: 12px;
+  padding: 1rem 1rem 0.75rem;
+  margin-bottom: 1rem;
+  transition: background 0.3s ease;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.notification-list li:hover {
+  background: #f1fdf6;
+}
+
+.notification-list li.unread {
+  border-left-color: #4285f4;
+  background: #edf4ff;
+}
+
+.notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notif-type {
+  background: #d1fae5;
+  color: #107154;
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.notification-list li p {
+  color: #444;
+  margin: 0.5rem 0 0.25rem;
+  font-size: 0.95rem;
+}
+
+.notification-list li small {
+  color: #888;
+  font-size: 0.75rem;
+}
+
+/* ✨ Apparition douce */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

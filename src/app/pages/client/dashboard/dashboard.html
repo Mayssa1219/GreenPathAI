@@ -1,3 +1,4 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <app-navbar>
   <div class="dashboard-home container">
 
@@ -99,7 +100,8 @@
       </section>
 
       <!-- Météo -->
-      <section class="card weather" [ngClass]="'weather-' + weather?.weather[0]?.main?.toLowerCase()" *ngIf="!weatherError; else errorTpl">
+      <section class="card weather"   [ngClass]="weatherCssClass"
+               *ngIf="!weatherError; else errorTpl">
         <h2 class="section-title">
           <span class="material-symbols-rounded">partly_cloudy_day</span>
           Météo à {{ weather?.name }}
@@ -110,11 +112,11 @@
             <img
               class="weather-icon"
               [src]="'https://openweathermap.org/img/wn/' + weather?.weather[0]?.icon + '@4x.png'"
-              alt="Météo"
+              [alt]="weatherDescriptionLogique || 'Météo'"
             />
             <div class="weather-temp-info">
               <p class="main-temp">{{ weather?.main?.temp }}°C</p>
-              <p class="desc">{{ weather?.weather[0]?.description | titlecase }}</p>
+              <p class="desc"> {{ weatherDescriptionLogique }}</p>
             </div>
           </div>
 
@@ -178,18 +180,56 @@
       </section>
 
 
-      <!-- Circuits populaires -->
-      <section class="card popular">
+      <section class="card weather-circuits" *ngIf="circuitsMeteo?.length">
         <h2 class="section-title">
-          <span class="material-symbols-rounded">local_fire_department</span> Circuits populaires
+          <span class="material-symbols-rounded">wb_sunny</span>
+          Circuits recommandés pour la météo
         </h2>
-        <div class="popular-list">
-          <div *ngFor="let circuit of tendances" class="popular-card">
-            <img [src]="circuit.image" alt="Circuit populaire"/>
-            <div class="info">
-              <h4>{{ circuit.nom }}</h4>
-              <p>{{ circuit.region }}</p>
+
+        <div class="carousel-wrapper">
+          <!-- Flèches -->
+          <button class="carousel-arrow left" (click)="prevSlide()" aria-label="Précédent">&#10094;</button>
+          <button class="carousel-arrow right" (click)="nextSlide()" aria-label="Suivant">&#10095;</button>
+
+          <!-- Carousel -->
+          <div
+            class="carousel-track"
+            [style.transform]="'translateX(-' + currentIndex * 100 + '%)'"
+          >
+            <div
+              class="carousel-card"
+              *ngFor="let circuit of circuitsMeteo"
+            >
+              <img
+                [src]="circuit.photoUrl || 'assets/default-circuit.jpg'"
+                [alt]="'Photo de ' + (circuit.titre || 'circuit météo')"
+              />
+
+              <div class="info">
+                <h4>{{ circuit.titre }}</h4>
+                <p class="region">📍 {{ circuit.lieux?.[0]?.region || circuit.lieux?.[0]?.nom || 'Lieu inconnu' }}</p>
+                <p class="description">
+                  {{ circuit.description || 'Pas de description disponible.' }}
+                </p>
+                <ul class="etapes-list" *ngIf="getEtapesArray(circuit.etapes).length">
+                  <li *ngFor="let etape of getEtapesArray(circuit.etapes); let i = index">
+                    <span class="etape-index">Étape {{ i + 1 }} :</span> {{ etape }}
+                  </li>
+                </ul>
+                <p class="niveau">♻️ Écoresponsabilité : {{ circuit.niveauEcoresponsabilite }} / 10</p>
+              </div>
             </div>
+          </div>
+
+          <!-- Dots -->
+          <div class="carousel-dots">
+      <span
+        *ngFor="let circuit of circuitsMeteo; let idx = index"
+        class="dot"
+        [class.active]="idx === currentIndex"
+        (click)="goToSlide(idx)"
+        aria-label="'Aller à la diapositive ' + (idx + 1)"
+      ></span>
           </div>
         </div>
       </section>
