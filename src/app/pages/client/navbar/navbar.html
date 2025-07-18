@@ -21,7 +21,10 @@
     <div class="navbar-right">
       <div class="notif-container" (click)="toggleNotifications()" title="Voir les notifications">
         <span class="material-symbols-rounded notif-icon">notifications</span>
-        <span class="notif-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+        <span
+          class="notif-badge"
+          [class.empty]="unreadCount === 0"
+          *ngIf="true">{{ unreadCount }}</span>
       </div>
       <div class="profile-container" title="Mon profil">
         <img [src]="photoUrl" alt="Photo de profil" class="profile-avatar" />

@@ -372,5 +372,9 @@ body {
     margin-left: 0 !important;
   }
 }
+.notif-badge.empty {
+  background-color: gray;
+  color: white;
+}
 
 

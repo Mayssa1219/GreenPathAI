@@ -5,6 +5,8 @@ import {CommonModule, NgIf} from '@angular/common';
 import {Router, RouterModule} from '@angular/router';
 import {VoiceService} from '../../../Services/VoiceService';
 import {NotificationsComponent} from '../notifications/notifications';
+import {AppNotification} from '../../../models/Notification';
+import {NotificationService} from '../../../Services/NotificationService';
 @Component({
   selector: 'app-navbar',
   standalone: true,
@@ -33,7 +35,6 @@ export class NavbarComponent implements OnInit {
   toggleSidebar(): void {
     this.collapsed = !this.collapsed;
   }
-  unreadCount = 3; // 🔴 à mettre à jour dynamiquement selon tes données
 
   toggleTheme(): void {
     this.isDarkTheme = !this.isDarkTheme;
@@ -58,11 +59,17 @@ export class NavbarComponent implements OnInit {
   constructor(
     private clientService: ClientService,
     private router:Router,
-    private voiceService: VoiceService
+    private voiceService: VoiceService,
+    private notificationService:NotificationService
   ) {
 
   }
+  notifications: AppNotification[] = [];
+
   ngOnInit(): void {
+
+
+
     const storedTheme = localStorage.getItem('theme');
     this.isDarkTheme = storedTheme === 'dark';
     this.applyTheme();
@@ -91,6 +98,13 @@ export class NavbarComponent implements OnInit {
           console.error('Erreur récupération client:', err);
         }
       });
+      this.notificationService.getUserNotifications(Number(this.userId)).subscribe({
+        next: (notifs) => {
+          this.notifications = notifs;
+        },
+        error: (err) => console.error("Erreur notifications", err)
+      });
+
     }}
   showNotifications = false;
   notifCount = 0;
@@ -98,5 +112,9 @@ export class NavbarComponent implements OnInit {
   toggleNotifications() {
     this.showNotifications = !this.showNotifications;
   }
+  get unreadCount(): number {
+    return this.notifications.filter(n => !n.read).length;
+  }
+
 
 }

@@ -21,6 +21,9 @@
   align-items: center;
   gap: 0.5rem;
 }
+.notif-title {
+  color: #ff5722; /* exemple : un orange */
+}
 
 /* ❌ Bouton fermer moderne */
 .close-btn {

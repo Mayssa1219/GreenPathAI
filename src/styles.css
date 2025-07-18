@@ -435,3 +435,115 @@ body.dark-theme .speak-icon:hover {
 body.dark-theme .eco-score-bar {
   background-color: #3a4d3d;
 }
+/*----cricuits météo---*/
+body.dark-theme .weather-circuits {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+  border: 1px solid #333;
+}
+
+body.dark-theme .weather-circuits .section-title {
+  color: #ffc107;
+}
+
+body.dark-theme .weather-circuits .carousel-card {
+  background-color: #2c2c2c;
+  border: 1px solid #444;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-theme .weather-circuits .carousel-card h4 {
+  color: #ffffff;
+}
+
+body.dark-theme .weather-circuits .description,
+body.dark-theme .weather-circuits .region,
+body.dark-theme .weather-circuits .niveau,
+body.dark-theme .weather-circuits .etapes-list li {
+  color: #cccccc;
+}
+
+body.dark-theme .weather-circuits .dot {
+  background-color: #888;
+}
+
+body.dark-theme .weather-circuits .dot.active {
+  background-color: #ffc107;
+}
+
+body.dark-theme .carousel-arrow {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+body.dark-theme .carousel-arrow:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+/*---- notifications---*/
+body.dark-theme .notif-panel-header {
+  background: #1e1e1ecc;
+  color: #f1f1f1;
+  border-bottom: 1px solid #333;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-theme .notif-title {
+  color: #ffa726;
+}
+
+body.dark-theme .close-btn {
+  color: #aaa;
+}
+body.dark-theme .close-btn:hover {
+  color: #ff8a80;
+}
+
+body.dark-theme .notification-center {
+  background: #121212;
+  box-shadow: 0 12px 32px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-theme .notification-center h2 {
+  color: #9ee5d2;
+}
+
+body.dark-theme .badge {
+  background: #d32f2f;
+  color: #fff;
+}
+
+body.dark-theme .tabs button {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: #b2dfdb;
+}
+body.dark-theme .tabs button.active {
+  background: #2e7d32;
+  color: white;
+  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.4);
+}
+
+body.dark-theme .notification-list li {
+  background: #1e1e1e;
+  border-left-color: #66bb6a;
+}
+body.dark-theme .notification-list li:hover {
+  background: #263238;
+}
+body.dark-theme .notification-list li.unread {
+  background: #1a237e;
+  border-left-color: #90caf9;
+}
+
+body.dark-theme .notification-list li p {
+  color: #e0e0e0;
+}
+body.dark-theme .notification-list li small {
+  color: #999;
+}
+
+body.dark-theme .notif-type {
+  background: #004d40;
+  color: #80cbc4;
+}
+

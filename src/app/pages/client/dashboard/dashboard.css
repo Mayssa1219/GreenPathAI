@@ -104,14 +104,15 @@
 /* 🧩 GRILLE */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 2fr 1fr; /* Largeur : circuits plus large */
   grid-template-areas:
-    "stats stats stats stats"
-    "weather weather planning planning"
-    "popular popular goals goals"
-    "suggestion suggestion suggestion suggestion";
+    "stats stats"
+    "weather planning"
+    "popular goals"
+    "suggestion suggestion";
   gap: 2rem;
 }
+
 
 /* 🧾 CARTES */
 .card {
@@ -224,17 +225,97 @@
 /* 💡 SUGGESTION IA */
 .suggestion-result {
   display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin-top: 1.3rem;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.5s ease forwards;
+  transition: box-shadow 0.3s ease;
 }
+
+.suggestion-result:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .suggestion-result img {
-  width: 80px;
-  height: 80px;
-  border-radius: 1rem;
+  width: 320px;
+  max-width: 100%;
+  border-radius: 12px;
   object-fit: cover;
-  box-shadow: var(--shadow);
+  aspect-ratio: 4 / 3;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+
+.suggestion-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.suggestion-info h4 {
+  font-size: 1.4rem;
+  color: #1c3124;
+  margin-bottom: 4px;
+}
+
+.desc {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+.etapes ul {
+  list-style: disc;
+  margin: 8px 0 0 20px;
+  padding: 0;
+  color: #444;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.tag {
+  background-color: #d0f2e5;
+  color: #1b5e20;
+  padding: 6px 12px;
+  border-radius: 24px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.btn-link {
+  align-self: flex-start;
+  padding: 8px 16px;
+  background-color: var(--primary, #3cb371);
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.btn-link:hover {
+  background-color: var(--primary-dark, #2a7a4f);
+}
+
 
 .carousel-wrapper {
   position: relative;
@@ -260,11 +341,12 @@
 
 .carousel-card img {
   width: 100%;
-  height: 180px; /* Hauteur réduite */
+  height: 100px; /* Hauteur réduite */
   object-fit: cover;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
 }
+
 
 .carousel-card .info {
   padding: 0.8rem 1rem;
@@ -361,10 +443,6 @@
   background-color: #3cb371;
 }
 
-
-
-
-
 /* 🎯 OBJECTIFS */
 .goals ul {
   list-style: none;
@@ -414,14 +492,16 @@
 /* 📱 RESPONSIVE */
 @media (max-width: 1024px) {
   .dashboard-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     grid-template-areas:
-      "stats stats"
-      "weather planning"
-      "popular popular"
-      "goals goals"
-      "suggestion suggestion";
+      "stats"
+      "weather"
+      "planning"
+      "popular"
+      "goals"
+      "suggestion";
   }
+
   .stats-row {
     justify-content: space-around;
   }

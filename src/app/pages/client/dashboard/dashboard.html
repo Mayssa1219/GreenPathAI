@@ -251,13 +251,42 @@
         <h2 class="section-title">
           <span class="material-symbols-rounded">smart_toy</span> Suggestion IA
         </h2>
-        <button (click)="generateSuggestion()" class="btn-suggestion">Générer une idée</button>
-        <article *ngIf="suggestion" class="suggestion-result">
-          <img [src]="suggestion.image" alt="Suggestion" />
-          <div>
-            <h4>{{ suggestion.nom }}</h4>
-            <p>{{ suggestion.region }}</p>
-            <a [href]="['/circuit', suggestion.id]">Voir le circuit</a>
+
+        <button (click)="generateSuggestion()" class="btn-suggestion">
+          Générer une idée
+        </button>
+
+        <article *ngIf="circuit" class="suggestion-result animate-in">
+          <img
+            *ngIf="circuit.photoUrl"
+            [src]="circuit.photoUrl"
+            [alt]="circuit.titre || 'Image suggestion'"
+            class="suggestion-image"
+          />
+
+          <div class="suggestion-info">
+            <h4>{{ circuit.titre }}</h4>
+            <p class="desc">{{ circuit.description }}</p>
+
+            <p *ngIf="circuit.duree"><strong>🕒 Durée :</strong> {{ circuit.duree }} jour(s)</p>
+            <p *ngIf="circuit.niveauEcoresponsabilite !== undefined"><strong>♻️ Écoresponsabilité :</strong> {{ circuit.niveauEcoresponsabilite }} / 10</p>
+
+            <div *ngIf="circuit.tags?.length" class="tags">
+              <strong>🏷️ Tags :</strong>
+              <span *ngFor="let tag of circuit.tags" class="tag">{{ tag }}</span>
+            </div>
+
+
+            <div *ngIf="circuit.etapes" class="etapes">
+              <strong>🧭 Étapes :</strong>
+              <ul>
+                <li *ngFor="let etape of getEtapesArray(circuit.etapes)">
+                  {{ etape }}
+                </li>
+              </ul>
+            </div>
+
+            <a [routerLink]="['/circuit', circuit.id]" class="btn-link">Voir le circuit</a>
           </div>
         </article>
       </section>

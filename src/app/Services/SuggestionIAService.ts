@@ -14,4 +14,9 @@ export class SuggestionIAService {
     return this.http.get<number>(`${this.apiUrl}/count`);
   }
 
+  getCircuitPersonnalise(clientId: number, localisation: string): Observable<Circuit> {
+    return this.http.get<Circuit>(`${this.apiUrl}/personnalise/${clientId}/${localisation}`);
+  }
+
+
 }

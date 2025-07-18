@@ -11,10 +11,11 @@ import { CircuitService } from '../../../Services/CircuitService';
 import {Circuit} from '../../../models/Circuit';
 import {firstValueFrom} from 'rxjs';
 import {SuggestionIAService} from '../../../Services/SuggestionIAService';
+import {RouterModule} from '@angular/router';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NavbarComponent, CommonModule,NgFor],
+  imports: [NavbarComponent, CommonModule,NgFor,RouterModule ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
@@ -22,15 +23,25 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
   username = 'Cher client';
   email = '';
   userId = '';
+  photoUrl = 'default-avatar.png';
   clientData: Client | null = null;
-  circuitsMeteo: Circuit[] = [];
-  weatherCondition: string = '';
+  weatherCondition = '';
   weather: any = null;
   weatherError = false;
-  photoUrl = 'default-avatar.png';
   weatherDescriptionLogique = '';
+  weatherCssClass = '';
 
+  circuitsMeteo: Circuit[] = [];
+  circuit: Circuit | null = null;
+  isLoading = true;
+  hasError = false;
 
+  // UI
+  currentIndex = 0;
+  intervalId: any;
+  showToast = false;
+  toastMessage = '';
+  localisation: string = 'Tunisie'; // Valeur par défaut
   greenTips: string[] = [
     "Éteins les lumières inutiles.",
     "Prends une douche plus courte.",
@@ -95,11 +106,6 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
   };
 
   suggestion: any = null;
-  tendances = [
-    { nom: 'Cap Bon', region: 'Nabeul', image: 'assets/capbon.jpg' },
-    { nom: 'Ichkeul', region: 'Bizerte', image: 'assets/ichkeul.jpg' },
-    { nom: 'Tamerza', region: 'Tozeur', image: 'assets/tamerza.jpg' }
-  ];
 
   planning = {
     prochaineReservation: '10 Juillet 2025',
@@ -112,13 +118,7 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
     'Partager 3 suggestions IA avec la communauté'
   ];
 
-  upcomingEvents = [
-    { message: "Atelier écoresponsable à Sousse", date: new Date("2025-07-12") },
-    { message: "Visite guidée de la Médina", date: new Date("2025-07-15") }
-  ];
 
-  showToast = false;
-  toastMessage = '';
 
   constructor(
     private weatherService: WeatherService,
@@ -147,31 +147,34 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
         error: (err) => console.error('Erreur récupération client:', err)
       });
     }
-
-    //position pour météo
+    // Appel de la géoloc + météo
     this.geolocService.getPosition()
       .then(position => {
         const { latitude, longitude } = position.coords;
         return this.geolocService.getCityFromCoords(latitude, longitude);
       })
       .then(city => {
-        const selectedCity = city || 'Tunis';
+        this.localisation = city || 'Tunisie'; // Mise à jour locale
 
-        // Appelle les deux observables en parallèle
-        this.getWeather(selectedCity); // Méthode déjà existante qui charge les données météo
+        this.getWeather(this.localisation);
 
-        this.weatherService.getWeatherDescriptionLogique(selectedCity).subscribe(desc => {
+        this.weatherService.getWeatherDescriptionLogique(this.localisation).subscribe(desc => {
           this.weatherDescriptionLogique = desc;
         });
+
+        this.loadSuggestionIA(); // Appelle la suggestion IA **après** localisation connue
       })
       .catch(err => {
         console.warn('Erreur géoloc, fallback sur Tunisie', err);
 
-        this.getWeather('Tunisie');
+        this.localisation = 'Tunisie';
+        this.getWeather(this.localisation);
 
-        this.weatherService.getWeatherDescriptionLogique('Tunisie').subscribe(desc => {
+        this.weatherService.getWeatherDescriptionLogique(this.localisation).subscribe(desc => {
           this.weatherDescriptionLogique = desc;
         });
+
+        this.loadSuggestionIA(); // fallback aussi ici
       });
 
 
@@ -254,12 +257,7 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
     this.voice.speak(`Astuce verte du jour : ${this.greenTip}`);
   }
   generateSuggestion() {
-    this.suggestion = {
-      id: 42,
-      nom: 'Djerba Eco-Tour',
-      region: 'Medenine',
-      image: 'public/djerba.jpg'
-    };
+    this.loadSuggestionIA();
   }
 
 
@@ -329,10 +327,6 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
     this.showToast = false;
     this.stopVoice()
   }
-  currentIndex = 0;
-  intervalId: any;
-
-
 
   ngOnDestroy() {
     clearInterval(this.intervalId);
@@ -377,8 +371,6 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
       this.getWeather('Tunisie'); // fallback
     }
   }
-  weatherCssClass = '';
-
   setWeatherCssClassFromDescription(description: string) {
     const desc = description.toLowerCase();
 
@@ -401,6 +393,32 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
     } else {
       this.weatherCssClass = 'weather'; // style neutre par défaut
     }
+  }
+// ===== Suggestion IA personnalisée =====
+  loadSuggestionIA() {
+    if (!this.userId) {
+      console.error('UserId manquant');
+      this.hasError = true;
+      this.isLoading = false;
+      return;
+    }
+
+    this.isLoading = true;
+
+    this.suggestionService.getCircuitPersonnalise(Number(this.userId), this.localisation).subscribe({
+      next: data => {
+        this.circuit = data;        // assigne bien la donnée reçue à this.circuit
+        this.isLoading = false;
+        this.hasError = false;
+        console.log('Suggestion IA reçue:', data);
+
+      },
+      error: err => {
+        console.error('Erreur suggestion IA', err);
+        this.hasError = true;
+        this.isLoading = false;
+      }
+    });
   }
 
 

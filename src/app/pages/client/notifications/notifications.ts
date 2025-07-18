@@ -2,13 +2,21 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { NotificationService } from '../../../Services/NotificationService';
 import { AppNotification, NotificationType } from '../../../models/Notification';
 import { CommonModule } from '@angular/common';
-
+import { trigger, transition, style, animate } from '@angular/animations';
 @Component({
   selector: 'app-notifications',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './notifications.html',
-  styleUrls: ['./notifications.css']  // <-- corrigé ici
+  styleUrls: ['./notifications.css'],
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(10px)' }),
+        animate('500ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
 })
 export class NotificationsComponent implements OnInit {
   notifications: AppNotification[] = [];
@@ -90,7 +98,6 @@ export class NotificationsComponent implements OnInit {
     }
   }
 
-  get unreadCount(): number {
-    return this.notifications.filter(n => !n.read).length;
-  }
+
+
 }
