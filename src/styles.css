@@ -547,3 +547,38 @@ body.dark-theme .notif-type {
   color: #80cbc4;
 }
 
+/* 🌙 Mode sombre pour .suggestion-result */
+body.dark-theme .suggestion-result {
+  background: #1e1e1e;
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-theme .suggestion-result:hover {
+  box-shadow: 0 12px 24px rgba(255, 255, 255, 0.08);
+}
+
+body.dark-theme .suggestion-info h4 {
+  color: var(--primary);
+}
+
+body.dark-theme .desc {
+  color: #cccccc;
+}
+
+body.dark-theme .etapes ul {
+  color: #bbbbbb;
+}
+
+body.dark-theme .tag {
+  background-color: #2a4d3a;
+  color: #adebad;
+}
+
+body.dark-theme .btn-link {
+  background-color: var(--primary-dark, #2a7a4f);
+  color: #ffffff;
+}
+
+body.dark-theme .btn-link:hover {
+  background-color: #1d5c3a;
+}

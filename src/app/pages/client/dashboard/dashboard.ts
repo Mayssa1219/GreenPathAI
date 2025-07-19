@@ -1,4 +1,4 @@
-import {Component, OnInit, AfterViewInit, AfterContentInit, OnDestroy} from '@angular/core';
+import {Component, OnInit, AfterViewInit, AfterContentInit, OnDestroy, NgModule} from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar';
 import {CommonModule, NgFor} from '@angular/common';
 import { WeatherService } from '../../../Services/WeatherService';
@@ -11,11 +11,13 @@ import { CircuitService } from '../../../Services/CircuitService';
 import {Circuit} from '../../../models/Circuit';
 import {firstValueFrom} from 'rxjs';
 import {SuggestionIAService} from '../../../Services/SuggestionIAService';
-import {RouterModule} from '@angular/router';
+import {ActivatedRoute, RouterModule} from '@angular/router';
+import {EvenementLocal, PlanningDto, PlanningService} from '../../../Services/PlanningService';
+import {FormsModule} from '@angular/forms';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NavbarComponent, CommonModule,NgFor,RouterModule ],
+  imports: [NavbarComponent, CommonModule,NgFor,RouterModule,FormsModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
@@ -105,28 +107,28 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
     ecoScore: 0
   };
 
-  suggestion: any = null;
-
-  planning = {
-    prochaineReservation: '10 Juillet 2025',
-    evenementLocal: 'Nettoyage plage Korba'
-  };
-
   goals = [
     'Créer 10 circuits avant la fin du mois',
     'Participer à 2 événements éco-responsables',
     'Partager 3 suggestions IA avec la communauté'
   ];
 
+  planning = {
+    prochaineReservation: 'Chargement...',
+    evenementLocal: null as EvenementLocal | null
+  };
+  evenement: any = null;
 
 
   constructor(
+    private route: ActivatedRoute,
     private weatherService: WeatherService,
     private clientService: ClientService,
     private geolocService: GeolocalisationService,
     public voice: VoiceService,
     private circuitService: CircuitService,
-    private suggestionService:SuggestionIAService
+    private suggestionService:SuggestionIAService,
+    private planningService: PlanningService
 ) {}
 
   ngOnInit() {
@@ -162,7 +164,6 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
           this.weatherDescriptionLogique = desc;
         });
 
-        this.loadSuggestionIA(); // Appelle la suggestion IA **après** localisation connue
       })
       .catch(err => {
         console.warn('Erreur géoloc, fallback sur Tunisie', err);
@@ -174,10 +175,14 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
           this.weatherDescriptionLogique = desc;
         });
 
-        this.loadSuggestionIA(); // fallback aussi ici
       });
 
-
+    const id = this.route.snapshot.paramMap.get('id'); // depuis l'URL
+    if (id) {
+      this.planningService.getEvenementById(+id).subscribe(evt => {
+        this.evenement = evt;
+      });
+    }
 // charger les circuits adaptés au météo
     this.loadCircuitsByMeteo();
     this.circuitService.countFavoris(Number(this.userId)).subscribe({
@@ -217,6 +222,21 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
           console.error("Erreur lors de la récupération :", err);
           this.stats.lastActivity = "Erreur serveur";
         }
+      }
+    });
+
+
+
+    this.planningService.getPlanning(Number(this.userId)).subscribe({
+      next: (res: PlanningDto) => {
+        this.planning = res;
+        console.log('🎯 Événement local reçu :', this.planning.evenementLocal);
+
+      },
+      error: (err) => {
+        console.error('Erreur de chargement du planning', err);
+        this.planning.prochaineReservation = 'Erreur lors du chargement';
+        this.planning.evenementLocal = null; // ✅ garder null pour respecter le type
       }
     });
 
@@ -421,5 +441,55 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
     });
   }
 
+  popupOuverte = false;
+
+  event = {
+    titre: '',
+    description: '',
+    dateDebut: '',
+    dateFin: '',
+    localisation: ''
+  };
+
+  ouvrirPopup() {
+    this.popupOuverte = true;
+  }
+
+  fermerPopup() {
+    this.popupOuverte = false;
+  }
+
+  planifier() {
+    this.planningService.ajouterEvenementLocal(this.event).subscribe({
+      next: res => {
+        alert("✅ Événement planifié !");
+        this.fermerPopup();
+      },
+      error: err => alert("❌ Erreur : " + err.error.message || "Impossible de créer l’événement")
+    });
+  }
+  popupOuverteEvent = false;
+
+  chargerEvenementLocal(id: number | undefined) {
+    if (!id) {
+      console.error('ID événement local invalide:', id);
+      return;
+    }
+    this.planningService.getEvenementById(id).subscribe({
+      next: (evenement) => {
+        this.evenement = evenement;
+        this.popupOuverteEvent = true;
+      },
+      error: (err) => {
+        console.error('Erreur chargement événement local', err);
+        this.evenement = null;
+        this.popupOuverteEvent = true;
+      }
+    });
+  }
+
+  fermerPopupEvent() {
+    this.popupOuverteEvent = false;
+  }
 
 }

@@ -139,21 +139,18 @@
 
 
       <!-- Planning -->
-      <!-- Planning amélioré -->
       <section class="card planning">
         <div class="planning-header">
           <h2 class="section-title">
             <span class="material-symbols-rounded">event</span> Votre agenda
           </h2>
-          <button routerLink="/planifier" class="btn-planifier">
+          <button (click)="ouvrirPopup()" class="btn-planifier">
             <span class="material-symbols-rounded">add</span>
             Planifier un événement
           </button>
-
         </div>
 
         <div class="planning-info">
-
           <div class="planning-item">
             <div class="left">
               <span class="material-symbols-rounded">place</span>
@@ -170,14 +167,83 @@
               <span class="material-symbols-rounded">celebration</span>
               <div>
                 <h4>Événement local</h4>
-                <p>{{ planning.evenementLocal }}</p>
+                <p>{{ planning.evenementLocal?.titre }}</p>
               </div>
             </div>
-            <a routerLink="/evenements" class="planning-link">Explorer</a>
-          </div>
+            <a *ngIf="planning.evenementLocal?.id"
+               (click)="chargerEvenementLocal(planning.evenementLocal?.id)"
+               class="planning-link">
+              Explorer
+            </a>
 
+          </div>
         </div>
       </section>
+
+      <div class="modal-overlay" [class.active]="popupOuverte">
+        <div class="modal">
+          <h3>Planifier un événement local</h3>
+          <form (ngSubmit)="planifier()" #eventForm="ngForm" class="event-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="titre">Titre</label>
+                <input id="titre" name="titre" [(ngModel)]="event.titre" required />
+              </div>
+
+              <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" [(ngModel)]="event.description" required></textarea>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="dateDebut">Date de début</label>
+                <input id="dateDebut" type="date" name="dateDebut" [(ngModel)]="event.dateDebut" required />
+              </div>
+
+              <div class="form-group">
+                <label for="dateFin">Date de fin</label>
+                <input id="dateFin" type="date" name="dateFin" [(ngModel)]="event.dateFin" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group full-width">
+                <label for="localisation">Lieu</label>
+                <input id="localisation" name="localisation" [(ngModel)]="event.localisation" required />
+              </div>
+            </div>
+
+            <div class="modal-buttons">
+              <button type="submit">Enregistrer</button>
+              <button type="button" (click)="fermerPopup()">Annuler</button>
+            </div>
+          </form>
+
+
+        </div>
+      </div>
+      <!-- Popup modale -->
+      <div class="popup-overlay" *ngIf="popupOuverteEvent">
+        <div class="popup-content" *ngIf="evenement; else noEvent">
+          <!-- Détail de l'événement -->
+          <h2>{{ evenement.titre }}</h2>
+          <p><strong>Description :</strong> {{ evenement.description }}</p>
+          <p><strong>Date :</strong> {{ evenement.dateDebut | date }}
+            <span *ngIf="evenement.dateFin">- {{ evenement.dateFin | date }}</span>
+          </p>
+          <p><strong>Lieu :</strong> {{ evenement.localisation }}</p>
+          <button (click)="fermerPopupEvent()" class="btn-fermer">Fermer</button>
+        </div>
+
+        <ng-template #noEvent>
+          <!-- Message "Aucun événement" -->
+          <img src="img.png" alt="Pas d'événement" />
+          <h3>Aucun événement à venir</h3>
+          <button (click)="fermerPopupEvent()" class="btn-fermer">Fermer</button>
+        </ng-template>
+      </div>
 
 
       <section class="card weather-circuits" *ngIf="circuitsMeteo?.length">
@@ -206,9 +272,7 @@
               />
 
               <div class="info">
-                <h4>{{ circuit.titre }}</h4>
-                <p class="region">📍 {{ circuit.lieux?.[0]?.region || circuit.lieux?.[0]?.nom || 'Lieu inconnu' }}</p>
-                <p class="description">
+                <h4>{{ circuit.titre }}</h4><p class="description">
                   {{ circuit.description || 'Pas de description disponible.' }}
                 </p>
                 <ul class="etapes-list" *ngIf="getEtapesArray(circuit.etapes).length">
@@ -240,11 +304,13 @@
           <span class="material-symbols-rounded">flag</span> Vos objectifs
         </h2>
         <ul>
-          <li *ngFor="let goal of goals">
-            <span class="material-symbols-rounded">check_circle</span> {{ goal }}
+          <li *ngFor="let goal of goals; let i = index">
+            <input type="checkbox" id="goal{{i}}" [(ngModel)]="goalsChecked[i]" />
+            <label for="goal{{i}}">{{ goal }}</label>
           </li>
         </ul>
       </section>
+
 
       <!-- Suggestion IA -->
       <section class="card suggestion">
