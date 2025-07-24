@@ -167,7 +167,7 @@
               <span class="material-symbols-rounded">celebration</span>
               <div>
                 <h4>Événement local</h4>
-                <p>{{ planning.evenementLocal?.titre }}</p>
+                <p>{{ planning.evenementLocal?.titre || 'Aucun événement local prévu' }}</p>
               </div>
             </div>
             <a *ngIf="planning.evenementLocal?.id"
@@ -175,7 +175,6 @@
                class="planning-link">
               Explorer
             </a>
-
           </div>
         </div>
       </section>
@@ -303,10 +302,20 @@
         <h2 class="section-title">
           <span class="material-symbols-rounded">flag</span> Vos objectifs
         </h2>
+        <div class="ajout-goal">
+          <input type="text" [(ngModel)]="nouveauGoalTexte" placeholder="Nouvel objectif..." />
+          <button (click)="ajouterGoal()" [disabled]="!nouveauGoalTexte.trim()">Ajouter</button>
+        </div>
         <ul>
           <li *ngFor="let goal of goals; let i = index">
-            <input type="checkbox" id="goal{{i}}" [(ngModel)]="goalsChecked[i]" />
-            <label for="goal{{i}}">{{ goal }}</label>
+            <input
+              type="checkbox"
+              id="goal{{ goal.id }}"
+              [(ngModel)]="goal.done"
+              (change)="onToggleGoal(goal)"
+            />
+            <label for="goal{{ goal.id }}">{{ goal.texte }}</label>
+            <button (click)="supprimerGoal(goal)" class="btn-supprimer" title="Supprimer cet objectif">✖</button>
           </li>
         </ul>
       </section>

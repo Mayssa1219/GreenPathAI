@@ -1,1 +1,229 @@
-<p>profile works!</p>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<app-navbar>
+  <div class="profil-container">
+
+    <!-- Carte infos à gauche -->
+    <div class="profil-card profil-info">
+      <img class="avatar" [src]="photoUrl" alt="Photo de profil" />
+      <h2 class="client-name">{{ username }}</h2>
+
+      <p class="client-email">
+        <span class="material-symbols-rounded">mail</span> {{ email }}
+      </p>
+      <p class="client-local">
+        <span class="material-symbols-rounded">location_on</span>
+        {{ location || 'Localisation inconnue' }}, Tunisie
+      </p>
+
+      <div
+        class="eco-score-circle"
+        [style.--eco-color]="getEcoColor(ecorespScore)"
+        [title]="getEcoLevel(ecorespScore)"
+      >
+        <svg class="progress-ring" width="120" height="120" aria-label="Score écoresponsabilité">
+          <circle
+            class="ring-bg"
+            r="50"
+            cx="60"
+            cy="60"
+            fill="transparent"
+            stroke="#eee"
+            stroke-width="10"
+          ></circle>
+          <circle
+            class="ring-fill"
+            r="50"
+            cx="60"
+            cy="60"
+            fill="transparent"
+            stroke="var(--eco-color)"
+            stroke-width="10"
+            stroke-linecap="round"
+            [attr.stroke-dasharray]="circumference"
+            [attr.stroke-dashoffset]="getStrokeDashOffset(ecorespScore)"
+            style="transition: stroke-dashoffset 0.35s ease 0s;"
+          ></circle>
+        </svg>
+
+        <div class="eco-score-text" aria-live="polite">
+          {{ ecorespScore | number: '1.1-2' }}%
+        </div>
+      </div>
+
+      <div class="secondary-scores">
+        <div class="mini-score" *ngFor="let stat of subScores">
+          <div class="label">{{ stat.label }}</div>
+          <div class="bar-container">
+            <div
+              class="bar"
+              [style.width.%]="stat.value"
+              [style.background]="getEcoColor(stat.value)"
+              [attr.aria-label]="stat.label + ' : ' + stat.value + '%'"
+            ></div>
+          </div>
+          <div class="value">{{ stat.value }}%</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Partie droite profil-edit -->
+    <div class="profil-card profil-edit">
+      <!-- Tabs -->
+      <div class="edit-tabs">
+        <button (click)="activeTab = 'infos'" [class.active]="activeTab === 'infos'">Infos</button>
+        <button (click)="activeTab = 'securite'" [class.active]="activeTab === 'securite'">Sécurité</button>
+      </div>
+
+      <!-- Formulaire -->
+      <form class="profile-form" (ngSubmit)="updateProfile()">
+
+        <!-- Onglet Infos -->
+        <div *ngIf="activeTab === 'infos'">
+          <label>
+            Nom complet:
+            <input type="text" [(ngModel)]="username" name="username" required />
+          </label>
+
+          <label>
+            Email:
+            <input type="email" [(ngModel)]="email" name="email" required />
+          </label>
+
+          <label class="location-label">
+            Localisation:
+            <div class="location-input-group">
+              <input type="text" [(ngModel)]="location" name="location" />
+              <button
+                type="button"
+                class="gps-btn"
+                (click)="getCurrentLocation()"
+                title="Utiliser ma position"
+                aria-label="Utiliser ma position"
+              >
+                <i class="fa fa-crosshairs"></i>
+              </button>
+            </div>
+          </label>
+
+          <button type="submit">Mettre à jour</button>
+        </div>
+
+        <!-- Onglet Sécurité -->
+        <div *ngIf="activeTab === 'securite'">
+          <label for="oldPasswordInput">
+            Ancien mot de passe:
+            <div class="password-input-group">
+              <input
+                id="oldPasswordInput"
+                [type]="showOldPassword ? 'text' : 'password'"
+                [(ngModel)]="oldPassword"
+                name="oldPassword"
+                required
+                [class.invalid]="oldPasswordTouched && !oldPassword"
+                (blur)="oldPasswordTouched = true"
+                aria-describedby="oldPasswordError"
+                [attr.aria-invalid]="oldPasswordTouched && !oldPassword ? 'true' : 'false'"
+              />
+              <span
+                class="material-symbols-rounded"
+                (click)="showOldPassword = !showOldPassword"
+                tabindex="0"
+                role="button"
+                aria-label="Afficher/Masquer ancien mot de passe"
+              >
+                {{ showOldPassword ? 'visibility_off' : 'visibility' }}
+              </span>
+            </div>
+          </label>
+          <small *ngIf="oldPasswordTouched && !oldPassword" class="error-message" id="oldPasswordError">
+            Veuillez saisir votre ancien mot de passe.
+          </small>
+
+          <label for="newPasswordInput">
+            Nouveau mot de passe:
+            <div class="password-input-group">
+              <input
+                id="newPasswordInput"
+                [type]="showNewPassword ? 'text' : 'password'"
+                [(ngModel)]="newPassword"
+                name="newPassword"
+                required
+                [class.invalid]="newPasswordTouched && !isNewPasswordValid()"
+                (blur)="newPasswordTouched = true"
+                aria-describedby="newPasswordError"
+                [attr.aria-invalid]="newPasswordTouched && !isNewPasswordValid() ? 'true' : 'false'"
+              />
+              <span
+                class="material-symbols-rounded"
+                (click)="showNewPassword = !showNewPassword"
+                tabindex="0"
+                role="button"
+                aria-label="Afficher/Masquer nouveau mot de passe"
+              >
+                {{ showNewPassword ? 'visibility_off' : 'visibility' }}
+              </span>
+            </div>
+          </label>
+          <small *ngIf="newPasswordTouched && !isNewPasswordValid()" class="error-message" id="newPasswordError">
+            Le mot de passe doit contenir au moins 8 caractères, une lettre et un chiffre.
+          </small>
+
+          <label for="confirmPasswordInput">
+            Confirmer le nouveau mot de passe:
+            <div class="password-input-group">
+              <input
+                id="confirmPasswordInput"
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                [(ngModel)]="confirmPassword"
+                name="confirmPassword"
+                required
+                [class.invalid]="confirmPasswordTouched && (confirmPassword !== newPassword)"
+                (blur)="confirmPasswordTouched = true"
+                aria-describedby="confirmPasswordError"
+                [attr.aria-invalid]="confirmPasswordTouched && (confirmPassword !== newPassword) ? 'true' : 'false'"
+              />
+              <span
+                class="material-symbols-rounded"
+                (click)="showConfirmPassword = !showConfirmPassword"
+                tabindex="0"
+                role="button"
+                aria-label="Afficher/Masquer confirmation mot de passe"
+              >
+                {{ showConfirmPassword ? 'visibility_off' : 'visibility' }}
+              </span>
+            </div>
+          </label>
+          <small *ngIf="confirmPasswordTouched && (confirmPassword !== newPassword)" class="error-message" id="confirmPasswordError">
+            Les mots de passe ne correspondent pas.
+          </small>
+
+          <label class="checkbox-label">
+            <input type="checkbox" [(ngModel)]="consentement" name="consentement" />
+            J'accepte la politique RGPD
+          </label>
+
+          <!-- ✅ Bouton spécifique pour changer mot de passe -->
+          <button
+            class="change-password-btn"
+            type="button"
+            (click)="changerMotDePasse()"
+            [disabled]="
+              !consentement ||
+              !oldPassword ||
+              !newPassword ||
+              !confirmPassword ||
+              confirmPassword !== newPassword ||
+              !isNewPasswordValid()
+            "
+          >
+            Changer le mot de passe
+          </button>
+        </div>
+      </form>
+
+      <button (click)="supprimerCompte()" class="btn-supprimer">Supprimer mon compte</button>
+    </div>
+  </div>
+</app-navbar>

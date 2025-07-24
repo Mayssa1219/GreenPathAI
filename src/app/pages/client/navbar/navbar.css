@@ -376,5 +376,11 @@ body {
   background-color: gray;
   color: white;
 }
+.menu-item.active a.menu-link {
+  background-color: #d4f5da;
+  color: #25915a;
+  font-weight: bold;
+  border-radius: 10px;
+}
 
 

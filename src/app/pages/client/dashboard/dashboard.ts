@@ -14,6 +14,7 @@ import {SuggestionIAService} from '../../../Services/SuggestionIAService';
 import {ActivatedRoute, RouterModule} from '@angular/router';
 import {EvenementLocal, PlanningDto, PlanningService} from '../../../Services/PlanningService';
 import {FormsModule} from '@angular/forms';
+import {Goal, GoalService} from '../../../Services/GoalService';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -107,11 +108,7 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
     ecoScore: 0
   };
 
-  goals = [
-    'Créer 10 circuits avant la fin du mois',
-    'Participer à 2 événements éco-responsables',
-    'Partager 3 suggestions IA avec la communauté'
-  ];
+  goals: Goal[] = [];
 
   planning = {
     prochaineReservation: 'Chargement...',
@@ -128,11 +125,13 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
     public voice: VoiceService,
     private circuitService: CircuitService,
     private suggestionService:SuggestionIAService,
-    private planningService: PlanningService
+    private planningService: PlanningService,
+    private goalService:GoalService
 ) {}
 
   ngOnInit() {
     const decoded = this.clientService.decodeToken();
+    console.log('Décodage du token:', decoded);
     if (decoded && decoded.sub) {
       this.userId = decoded.sub;
       this.username = decoded['username'] || decoded.sub || 'Utilisateur';
@@ -225,20 +224,31 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
       }
     });
 
-
+    const clientId = Number(this.userId); // ta méthode pour récupérer clientId
+    this.chargerGoals(clientId);
 
     this.planningService.getPlanning(Number(this.userId)).subscribe({
       next: (res: PlanningDto) => {
         this.planning = res;
-        console.log('🎯 Événement local reçu :', this.planning.evenementLocal);
 
+        if (this.planning.evenementLocal) {
+          console.log('🎯 Événement local reçu :', this.planning.evenementLocal);
+        } else {
+          console.warn('⚠️ Aucun événement local reçu.');
+          this.planning.evenementLocal = null; // sécurise la valeur
+        }
+
+        if (!this.planning.prochaineReservation) {
+          this.planning.prochaineReservation = 'Aucune réservation prévue';
+        }
       },
       error: (err) => {
-        console.error('Erreur de chargement du planning', err);
+        console.error('❌ Erreur de chargement du planning', err);
         this.planning.prochaineReservation = 'Erreur lors du chargement';
-        this.planning.evenementLocal = null; // ✅ garder null pour respecter le type
+        this.planning.evenementLocal = null;
       }
     });
+
 
 
     setTimeout(() => {
@@ -248,12 +258,36 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
     this.selectTipOfTheDay();
   }
   getEtapesArray(etapesString?: string): string[] {
-    return etapesString
-      ?.split(/Étape\s*\d+:/)
-      .map(e => e.trim())
-      .filter(e => e.length > 0) || [];
+    if (!etapesString) return [];
+
+    // Séparer d'abord selon la regex "Étape X:", puis splitter chaque morceau sur \n
+    const rawSteps = etapesString.split(/Étape\s*\d+:/).map(s => s.trim()).filter(s => s.length > 0);
+
+    // Pour chaque élément, splitter sur \n et aplatir en un seul tableau
+    const steps = rawSteps
+      .map(step => step.split('\n').map(s => s.trim()).filter(s => s.length > 0))
+      .flat();
+
+    return steps;
+  }
+  chargerGoals(clientId: number) {
+    this.goalService.getGoals(clientId).subscribe(goals => {
+      this.goals = goals;
+    });
   }
 
+  onToggleGoal(goal: Goal) {
+    this.goalService.toggleDone(goal.id).subscribe(updatedGoal => {
+      goal.done = updatedGoal.done;
+    });
+  }
+
+  supprimerGoal(goal: Goal) {
+    if (confirm(`Supprimer l’objectif : "${goal.texte}" ?`)) {
+      this.goalService.supprimerGoal(goal.id).subscribe(() => {
+        this.goals = this.goals.filter(g => g.id !== goal.id);
+      });
+    }}
   ngAfterViewInit() {
     setTimeout(() => {
       const fill = document.querySelector('.eco-progress-fill') as HTMLElement;
@@ -319,8 +353,8 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
   }
 
   getEcoColor(score: number): string {
-    if (score >= 80) return '#4CAF50';
-    if (score >= 50) return '#FFC107';
+    if (score >= 20) return '#4CAF50';
+    if (score >= 10) return '#FFC107';
     return '#F44336';
   }
 
@@ -491,5 +525,23 @@ export class DashboardComponent implements OnInit, AfterViewInit,OnDestroy {
   fermerPopupEvent() {
     this.popupOuverteEvent = false;
   }
+  nouveauGoalTexte: string = '';
+
+  ajouterGoal() {
+    const texte = this.nouveauGoalTexte.trim();
+    if (!texte) return;
+
+    this.goalService.ajouterGoal(Number(this.userId), texte).subscribe({
+      next: (goalAjoute) => {
+        this.goals.push(goalAjoute); // ou this.rechargerGoals() si tu préfères
+        this.nouveauGoalTexte = '';
+      },
+      error: (err) => {
+        console.error('❌ Erreur lors de l’ajout du goal', err);
+      }
+    });
+  }
+
+
 
 }

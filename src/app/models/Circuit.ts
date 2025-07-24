@@ -10,6 +10,7 @@ export interface Circuit {
   createdAt?: string;
   tags?: string[];
   lieux?: any[];
-  guide?: { id: number; nom?: string };
+  guide?: { id: number; nom?: string,photoUrl?:string};
   proposePar?: { id: number; nom?: string };
+  consignes?: string;
 }

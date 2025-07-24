@@ -7,15 +7,40 @@ import { SignupSuccessComponent } from './pages/signup-success/signup-success';
 import {ForgetPasswordComponent} from './pages/forget-password/forget-password';
 import {DashboardComponent} from './pages/client/dashboard/dashboard';
 import {DashboardDelayGuard} from './guards/dashboard-delay-guard';
+import { AuthGuard } from './guards/auth-guard';
+import { RoleStatutGuard } from './guards/role-guard';
+
+
 export const routes: Routes = [
   { path: '', component: HomeComponent },       // Page d'accueil
-  { path: 'login', component: LoginComponent }, // Page de connexion
-  { path: 'signup', component: SignupComponent }, // Page d'inscription
-  { path: 'otp-verification', component: OtpVerifyComponent },// Page de vérification OTP
-  {path: 'signup-success', component: SignupSuccessComponent } ,// Page de succès d'inscription
-  {path:'forgot-password', component:ForgetPasswordComponent}, // Page de mot de passe oublié
-  {path:'reset-password', loadComponent: () => import('./pages/reset-password/reset-password').then(m => m.ResetPasswordComponent)}, // Page de réinitialisation de mot de passe
-  { path: 'dashboard', component: DashboardComponent, canActivate: [DashboardDelayGuard] },// Page de tableau de bord du client
-  {path:'loading', loadComponent: () => import('./loading/loading').then(m => m.LoadingComponent)}, // Page de chargement
-  {path: '**', redirectTo: '', pathMatch: 'full' } // Redirection pour les routes inconnues
+  { path: 'login', component: LoginComponent },
+  { path: 'signup', component: SignupComponent },
+  { path: 'otp-verification', component: OtpVerifyComponent },
+  { path: 'signup-success', component: SignupSuccessComponent },
+  { path: 'forgot-password', component: ForgetPasswordComponent },
+  { path: 'reset-password', loadComponent: () => import('./pages/reset-password/reset-password').then(m => m.ResetPasswordComponent) },
+
+  {
+    path: 'dashboard',
+    component: DashboardComponent, canActivate: [AuthGuard, RoleStatutGuard],
+    data: { roles: ['client','admin'] } },
+  {
+    path: 'profile',
+    loadComponent: () => import('./pages/client/profile/profile').then(m => m.Profile),
+    canActivate: [AuthGuard, RoleStatutGuard,DashboardDelayGuard],
+    data: { roles: ['client'] }  // accessible uniquement aux clients
+  },
+  {
+    path: 'favoris',
+    loadComponent: () => import('./pages/client/favorites/favorites').then(m => m.FavoritesComponent),
+    canActivate: [AuthGuard, RoleStatutGuard, DashboardDelayGuard],
+    data: { roles: ['client'] }
+  },
+  {   path: 'circuits',
+    loadComponent: () => import('./pages/client/recherche-circuits/recherche-circuits').then(m => m.RechercheCircuits),
+    canActivate: [AuthGuard, RoleStatutGuard,DashboardDelayGuard],
+    data: { roles: ['client'] } },
+
+  { path: 'loading', loadComponent: () => import('./loading/loading').then(m => m.LoadingComponent) },
+  { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

@@ -1,0 +1,58 @@
+.voice-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 15px 20px;
+  background: #f0f4f8;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.voice-container p {
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.btn-group button {
+  flex: 1 1 120px;
+  min-width: 100px;
+  padding: 10px 15px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 5px rgb(0 123 255 / 0.3);
+}
+
+.btn-group button:disabled {
+  background-color: #c0c4c8;
+  cursor: not-allowed;
+  box-shadow: none;
+  color: #666;
+}
+
+.btn-group button:not(:disabled):hover {
+  background-color: #0056b3;
+}
+
+/* Responsive: sur petits écrans, les boutons s'empilent */
+@media (max-width: 480px) {
+  .btn-group {
+    flex-direction: column;
+  }
+  .btn-group button {
+    width: 100%;
+  }
+}

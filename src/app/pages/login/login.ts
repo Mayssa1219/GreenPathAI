@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       const token = params['token'];
       if (token) {
-        this.authService.setToken(token);
+        this.authService.setToken(token); // stocker le token
         this.router.navigate(['/dashboard']);
       }
     });

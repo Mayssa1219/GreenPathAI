@@ -1,0 +1,163 @@
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+/>
+
+<app-navbar>
+  <div class="search-page">
+    <header>
+      <h1>Recherche de circuits</h1>
+    </header>
+
+    <section class="filters">
+      <div class="search-input-wrapper">
+        <input
+          type="search"
+          placeholder="Rechercher un circuit..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchTermChange()"
+        />
+        <i class="fas fa-search search-icon"></i>
+      </div>
+
+      <select [(ngModel)]="filterGuide" (change)="onFilterGuideChange()">
+        <option value="all">Tous</option>
+        <option value="with-guide">Avec guide</option>
+        <option value="without-guide">Sans guide</option>
+      </select>
+
+      <div class="tags-filter">
+        <label *ngFor="let tag of availableTags">
+          <input
+            type="checkbox"
+            [value]="tag"
+            (change)="toggleTagSelection(tag)"
+            [checked]="selectedTags.includes(tag)"
+          />
+          {{ tag }}
+        </label>
+      </div>
+
+      <select [(ngModel)]="filterDuree" (ngModelChange)="onDureeFilterChange()">
+        <option value="all">Toutes durées</option>
+        <option value="short">Courte (&lt; 24h)</option>
+        <option value="medium">Moyenne (24h - 72h)</option>
+        <option value="long">Longue (&gt; 72h)</option>
+      </select>
+
+      <label>
+        Niveau écoresponsabilité :
+        <input
+          type="range"
+          min="0"
+          max="10"
+          [(ngModel)]="filterEcoScore"
+          (change)="onFilterEcoScoreChange()"
+        />
+        {{ filterEcoScore }}
+      </label>
+
+      <select [(ngModel)]="filterStatus" (change)="onFilterStatusChange()">
+        <option value="all">Tous</option>
+        <option value="PROPOSE">Proposé</option>
+        <option value="VALIDATED">Validé</option>
+        <option value="SUGGESTED">Suggéré</option>
+      </select>
+
+      <button (click)="resetFilters()">Réinitialiser filtres</button>
+    </section>
+
+    <section class="results">
+      <div class="spinner-container" *ngIf="loading">
+        <div class="spinner" aria-label="Chargement en cours"></div>
+      </div>
+
+      <div *ngIf="!loading && (circuits?.length === 0)" class="no-results">
+        Aucun circuit trouvé.
+      </div>
+
+      <div class="circuit-list">
+        <div *ngFor="let circuit of circuits ?? []" class="circuit-card">
+          <img
+            [src]="circuit.photoUrl"
+            alt="{{ circuit.titre }}"
+            class="circuit-image"
+          />
+
+          <h2>{{ circuit.titre }}</h2>
+
+          <div class="tags">
+            <span *ngFor="let tag of circuit.tags" class="tag">{{ tag }}</span>
+          </div>
+
+          <p>{{ circuit.description | slice: 0:100 }}...</p>
+
+          <p *ngIf="circuit.duree !== undefined; else noDuree">
+            Durée : {{ formatDuree(circuit.duree) }}
+          </p>
+          <ng-template #noDuree>Durée non précisée</ng-template>
+
+          <p>Écoresponsabilité : {{ circuit.niveauEcoresponsabilite }} / 10</p>
+
+          <p>
+            Statut :
+            <span
+              [ngClass]="getStatusClass(circuit.status ?? '')"
+              class="status-badge"
+            >
+              <i [ngClass]="getStatusIcon(circuit.status ?? '')"></i>
+              {{ circuit.status?.toLowerCase() || 'inconnu' }}
+            </span>
+          </p>
+
+          <!-- Infos guide -->
+          <p *ngIf="circuit.guide" class="guide-info">
+            Guide : {{ circuit.guide.nom }}
+            <img
+              [src]="circuit.guide.photoUrl"
+              alt="Photo guide"
+              class="guide-avatar"
+            />
+          </p>
+          <p *ngIf="!circuit.guide" class="no-guide">Pas de guide</p>
+          <button (click)="toggleFavoris(circuit)">
+            {{ isFavori(circuit) ? 'Retirer des favoris' : 'Ajouter aux favoris' }}
+          </button>
+          <div class="actions">
+            <!-- CIRCUIT AVEC GUIDE -->
+            <div *ngIf="circuit.guide" aria-label="Réservation nécessaire">
+              <button
+                (click)="reserverCircuit(circuit)"
+                [attr.aria-describedby]="'reserverDesc-' + circuit.id"
+              >
+                <i class="fas fa-calendar-check"></i>
+                Réserver pour accéder aux consignes
+              </button>
+              <div [id]="'reserverDesc-' + circuit.id" class="sr-only">
+                Vous devez réserver ce circuit pour accéder aux consignes
+                détaillées et à l’assistance vocale.
+              </div>
+            </div>
+
+            <!-- CIRCUIT SANS GUIDE -->
+            <div *ngIf="!circuit.guide" aria-label="Consignes et assistance vocale">
+              <button (click)="demarrerAssistanceVocale(circuit)">🔊 Lire les consignes</button>
+              <app-voice-assistant #voiceAssistant [circuit]="circuit"></app-voice-assistant>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="pagination" *ngIf="totalPages > 1">
+        <button (click)="previousPage()" [disabled]="currentPage === 1">
+          Précédent
+        </button>
+        <span>Page {{ currentPage }} / {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+          Suivant
+        </button>
+      </div>
+    </section>
+  </div>
+</app-navbar>

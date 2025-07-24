@@ -5,7 +5,7 @@ export interface Client {
   fullname?: string;
   email: string;
   motDePasse: string;
-  localisation: string;
+  location: string;
   photoUrl?: string;
   preferences?: string[];
   statut?: string;
@@ -16,4 +16,5 @@ export interface Client {
   dureePreferee?: number;
   favoris?: number[];
   lieuxVisites?: number[];
+  roles?: string[];
 }

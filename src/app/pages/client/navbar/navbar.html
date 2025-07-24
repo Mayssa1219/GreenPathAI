@@ -53,11 +53,36 @@
       </form>
 
       <ul class="menu-list">
-        <li class="menu-item"><a routerLink="/dashboard" class="menu-link"><span class="material-symbols-rounded">dashboard</span><span class="menu-label">Dashboard</span></a></li>
-        <li class="menu-item"><a routerLink="/suggestions" class="menu-link"><span class="material-symbols-rounded">travel_explore</span><span class="menu-label">Suggestions IA</span></a></li>
-        <li class="menu-item"><a routerLink="/favoris" class="menu-link"><span class="material-symbols-rounded">star</span><span class="menu-label">Favoris</span></a></li>
-        <li class="menu-item"><a routerLink="/profil" class="menu-link"><span class="material-symbols-rounded">person</span><span class="menu-label">Profil</span></a></li>
-        <li class="menu-item"><a class="menu-link" (click)="logout()"><span class="material-symbols-rounded">logout</span><span class="menu-label">Déconnexion</span></a></li>
+        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a routerLink="/dashboard" class="menu-link">
+            <span class="material-symbols-rounded">dashboard</span>
+            <span class="menu-label">Dashboard</span>
+          </a>
+        </li>
+        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a routerLink="/circuits" class="menu-link">
+            <span class="material-symbols-rounded">travel_explore</span>
+            <span class="menu-label">Circuits</span>
+          </a>
+        </li>
+        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a routerLink="/favoris" class="menu-link">
+            <span class="material-symbols-rounded">star</span>
+            <span class="menu-label">Favoris</span>
+          </a>
+        </li>
+        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a routerLink="/profile" class="menu-link">
+            <span class="material-symbols-rounded">person</span>
+            <span class="menu-label">Profil</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" (click)="logout()">
+            <span class="material-symbols-rounded">logout</span>
+            <span class="menu-label">Déconnexion</span>
+          </a>
+        </li>
       </ul>
 
       <div class="sidebar-footer">

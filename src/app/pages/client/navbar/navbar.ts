@@ -10,7 +10,7 @@ import {NotificationService} from '../../../Services/NotificationService';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, NgIf,NotificationsComponent],
+  imports: [CommonModule, NgIf,NotificationsComponent,RouterModule],
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.css'],
 })

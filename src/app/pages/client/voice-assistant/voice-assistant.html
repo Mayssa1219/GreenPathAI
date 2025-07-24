@@ -1,0 +1,11 @@
+<div class="voice-container">
+  <p><strong>Étape actuelle :</strong> {{ steps[currentStepIndex] }}</p>
+  <div class="btn-group">
+    <button (click)="prevStep()" [disabled]="currentStepIndex === 0">⬅️ Précédente</button>
+    <button (click)="playStep()">🔊 Lire</button>
+    <button (click)="pause()">⏸️ Pause</button>
+    <button (click)="resume()">▶️ Reprendre</button>
+    <button (click)="nextStep()" [disabled]="currentStepIndex === steps.length - 1">Suivante ➡️</button>
+    <button (click)="stop()">🛑 Stop</button>
+  </div>
+</div>

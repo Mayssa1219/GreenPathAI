@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
-import {map, Observable, of, throwError} from 'rxjs';
-import { jwtDecode } from 'jwt-decode';
-import {Client} from '../models/client';
-import {catchError} from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { catchError } from 'rxjs/operators';
+import { Client } from '../models/client';
 
-interface DecodedToken {
+interface DecodedToken extends JwtPayload {
   sub: string;
   exp: number;
   iat: number;
+  role?: string;
+  status?: string;
   [key: string]: any;
 }
 
@@ -16,44 +18,95 @@ interface DecodedToken {
   providedIn: 'root'
 })
 export class ClientService {
-  private apiUrl = 'http://localhost:8081/api/clients';
+  private readonly apiUrl = 'http://localhost:8081/api/clients';
 
   constructor(private http: HttpClient) {}
 
-  // 🔐 Récupère le token depuis localStorage
-  getToken(): string | null {
-    if (!localStorage.getItem('token')) {
-      console.warn('Aucun token trouvé dans localStorage');
-      return null;
+  private getToken(): string | null {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.warn('🔔 Aucun token trouvé dans localStorage.');
     }
-    return localStorage.getItem('token');}
+    return token;
+  }
 
-  // 🔓 Décode le token JWT
   decodeToken(): DecodedToken | null {
     const token = this.getToken();
     if (!token) return null;
+
     try {
-      console.log('Token récupéré depuis localStorage', jwtDecode(token));
-      // attention : jwt_decode est importé en tant que namespace, la fonction est sous .default
-      return (jwtDecode(token));
+      return jwtDecode<DecodedToken>(token);
     } catch (error) {
-      console.error('Erreur de décodage du token', error);
+      console.error('❌ Erreur lors du décodage du token JWT', error);
       return null;
     }
   }
 
-  // 👤 Récupère les infos du client connecté
   getClientInfo(id: string): Observable<Client> {
-    return this.http.get<Client>(`${this.apiUrl}/${id}`);
+    return this.http.get<Client>(`${this.apiUrl}/${id}`, this.getAuthHeaders()).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  // 📤 Mise à jour du profil client
+
   updateClient(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, data, this.getAuthHeaders());
+    return this.http.put(`${this.apiUrl}/${id}`, data, this.getAuthHeaders()).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  // 🔒 Auth headers (optionnel)
-  getAuthHeaders() {
+  changerMotDePasse(id: number, oldPassword: string, newPassword: string): Observable<void> {
+    const body = {
+      oldPassword,
+      newPassword
+    };
+    return this.http.put<void>(
+      `${this.apiUrl}/${id}/password`,
+      body,
+      this.getAuthHeaders() // ⬅️ ajoute les headers ici
+    );
+  }
+
+  isClientEmpty(clientId: number): Observable<boolean> {
+    return this.http.get<boolean>(
+      `${this.apiUrl}/${clientId}/isEmpty`,
+      this.getAuthHeaders()
+    ).pipe(catchError(this.handleError));
+  }
+
+  getAllClients(): Observable<Client[]> {
+    return this.http.get<Client[]>(`${this.apiUrl}/all`, this.getAuthHeaders()).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  getLastActivity(clientId: number): Observable<string> {
+    return this.http.get<string>(
+      `http://localhost:8081/historique/derniere-activite/${clientId}`,
+      {
+        ...this.getAuthHeaders(),
+        responseType: 'text' as 'json'
+      }
+    ).pipe(catchError(this.handleError));
+  }
+
+  getEcoScore(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/ecoresponsable/${id}`, this.getAuthHeaders()).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  deleteClient(): Observable<void> {
+    const decoded = this.decodeToken();
+    if (!decoded || !decoded.sub) return throwError(() => new Error('Utilisateur non connecté'));
+    return this.http.delete<void>(`${this.apiUrl}/${decoded.sub}`, this.getAuthHeaders());
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+  }
+
+  private getAuthHeaders(): { headers: HttpHeaders } {
     const token = this.getToken();
     return {
       headers: new HttpHeaders({
@@ -62,22 +115,32 @@ export class ClientService {
     };
   }
 
-  logout(): void {
-    localStorage.removeItem('token');
+  private handleError(error: HttpErrorResponse) {
+    console.error('🛑 Erreur HTTP détectée :', error);
+    return throwError(() => new Error('Erreur de communication avec le serveur.'));
   }
 
-  getLastActivity(clientId: number): Observable<string> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  getUserRole(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
 
-    return this.http.get<string>(
-      `http://localhost:8081/historique/derniere-activite/${clientId}`,
-      { headers, responseType: 'text' as 'json' } // important !
-    );
+    try {
+      const decoded = jwtDecode<DecodedToken>(token);
+      return decoded.role || null;
+    } catch {
+      return null;
+    }
   }
 
+  getUserStatut(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
 
-  getEcoScore(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/ecoresponsable/${id}`, this.getAuthHeaders());
+    try {
+      const decoded = jwtDecode<DecodedToken>(token);
+      return decoded.status || null;
+    } catch {
+      return null;
+    }
   }
 }

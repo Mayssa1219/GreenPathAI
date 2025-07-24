@@ -444,28 +444,166 @@
 }
 
 /* 🎯 OBJECTIFS */
-.goals ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
+/* Container card */
+.card.goals {
+  background: #fefefe;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(230, 240, 234, 0.7);
+  padding: 24px 30px;
+  max-width: 480px;
+  margin: 20px auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #357a38;
 }
-.goals li {
+
+/* Title with icon */
+.card.goals .section-title {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
-  font-weight: 500;
-  color: var(--primary-dark);
-  background: var(--surface-contrast);
-  padding: 0.7rem 1.1rem;
-  border-radius: 1rem;
-  box-shadow: var(--shadow);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #4caf50;
 }
-.goals li .material-symbols-rounded {
-  color: var(--primary);
+
+.card.goals .section-title .material-symbols-rounded {
+  font-size: 2rem;
+  margin-right: 12px;
+  color: #4caf50;
 }
+
+/* Input + button container */
+.card.goals .ajout-goal {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* Input field style */
+.card.goals .ajout-goal input[type="text"] {
+  flex-grow: 1;
+  padding: 10px 16px;
+  border: 2px solid #a8b7ae;
+  border-radius: 30px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  outline-offset: 2px;
+}
+
+.card.goals .ajout-goal input[type="text"]:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 6px #4caf50aa;
+}
+
+/* Ajouter button */
+.card.goals .ajout-goal button {
+  background-color: #4a90e2;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 22px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 3px 6px #4a90e2cc;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card.goals .ajout-goal button:disabled {
+  background-color: #a8c7f7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.card.goals .ajout-goal button:not(:disabled):hover {
+  background-color: #2a558c;
+  box-shadow: 0 6px 12px #2a558ccc;
+}
+
+/* Liste des objectifs */
+.card.goals ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+/* Chaque item */
+.card.goals ul li {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e6f0ea;
+  font-size: 1rem;
+  color: #5a6e5a;
+  transition: background-color 0.2s ease;
+}
+
+.card.goals ul li:hover {
+  background-color: #e6f0ea;
+}
+
+/* Checkbox */
+.card.goals ul li input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 14px;
+  accent-color: #4caf50;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Texte objectif */
+.card.goals ul li label {
+  flex-grow: 1;
+  user-select: none;
+  cursor: pointer;
+}
+
+/* Style objectif fait */
+.card.goals ul li input[type="checkbox"]:checked + label {
+  text-decoration: line-through;
+  color: #a8b7ae;
+  font-style: italic;
+}
+
+/* Bouton supprimer */
+.card.goals .btn-supprimer {
+  background: transparent;
+  border: none;
+  color: #357a38;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 6px 8px;
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.card.goals .btn-supprimer:hover {
+  color: #2a558c;
+  background-color: #a8c7f7;
+}
+
+/* Responsive : sur petits écrans */
+@media (max-width: 500px) {
+  .card.goals {
+    padding: 20px 18px;
+    max-width: 100%;
+  }
+
+  .card.goals .ajout-goal {
+    flex-direction: column;
+  }
+
+  .card.goals .ajout-goal input[type="text"],
+  .card.goals .ajout-goal button {
+    width: 100%;
+  }
+
+  .card.goals .ajout-goal button {
+    margin-top: 10px;
+  }
+}
+
 
 /* ❌ MÉTÉO ERREUR */
 .weather-error {
@@ -1376,4 +1514,8 @@ textarea {
 
 .btn-fermer:hover {
   background-color: #1d6e44;
+}
+.texte-vide {
+  color: #888;
+  font-style: italic;
 }

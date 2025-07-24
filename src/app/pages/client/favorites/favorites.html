@@ -1,1 +1,37 @@
-<p>favorites works!</p>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<app-navbar>
+  <div class="favoris-historique-container">
+    <!-- Colonne Favoris -->
+    <div class="colonne favoris">
+      <h2><i class="fa-solid fa-heart"></i> Mes Favoris</h2>
+
+      <div *ngIf="favoris.length === 0" class="empty">
+        Aucun circuit favori pour le moment.
+      </div>
+
+      <div *ngFor="let circuit of favoris" class="card">
+        <h3>{{ circuit.titre }}</h3>
+        <p>{{ circuit.description }}</p>
+        <button (click)="retirerFavori(circuit.id)">Retirer</button>
+      </div>
+    </div>
+
+    <!-- Colonne Historique -->
+    <div class="colonne historique">
+      <h2><i class="fa-solid fa-clock"></i> Historique</h2>
+
+      <div *ngIf="historique.length === 0" class="empty">
+        Aucune visite récente.
+      </div>
+
+      <div *ngFor="let circuit of historique" class="card">
+        <h3>{{ circuit.titre }}</h3>
+        <p>{{ circuit.description }}</p>
+        <button (click)="ajouterFavori(circuit.id)">Ajouter aux favoris</button>
+      </div>
+
+      <button class="vider" (click)="viderHistorique()"> <i class="fa-solid fa-trash"></i>
+        Vider l'historique</button>
+    </div>
+  </div>
+</app-navbar>
