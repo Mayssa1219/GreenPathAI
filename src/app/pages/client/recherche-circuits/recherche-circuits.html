@@ -127,7 +127,7 @@
             <!-- CIRCUIT AVEC GUIDE -->
             <div *ngIf="circuit.guide" aria-label="Réservation nécessaire">
               <button
-                (click)="reserverCircuit(circuit)"
+                (click)="openReservationForm(circuit)"
                 [attr.aria-describedby]="'reserverDesc-' + circuit.id"
               >
                 <i class="fas fa-calendar-check"></i>
@@ -158,6 +158,178 @@
           Suivant
         </button>
       </div>
+      <div *ngIf="showReservationForm" class="popupReservation-overlay" role="dialog" aria-modal="true" aria-labelledby="reservationTitle">
+        <div class="popupReservation-content">
+          <h2 id="reservationTitle">Réservation pour {{ selectedCircuit?.titre }}</h2>
+          <form [formGroup]="reservationForm" (ngSubmit)="submitReservation()">
+
+            <label for="date">Date de réservation :</label>
+            <input id="date" type="date" formControlName="date" required />
+
+            <label for="nbPersonnes">Nombre de personnes :</label>
+            <input id="nbPersonnes" type="number" min="1" formControlName="nbPersonnes" required />
+
+            <label for="message">Message (optionnel) :</label>
+            <textarea id="message" formControlName="message"></textarea>
+
+            <button type="submit" [disabled]="reservationForm.invalid">Confirmer</button>
+            <button type="button" (click)="closeReservationPopup()">Annuler</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="popup-overlay" *ngIf="showForm" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+        <div class="popup-content">
+          <!-- Formulaire -->
+          <form class="popup-form" [formGroup]="circuitForm" (ngSubmit)="submitForm()" novalidate>
+            <h2 id="popupTitle">Proposer un circuit</h2>
+
+            <!-- Ligne Titre + Durée -->
+            <div class="double-field-row">
+              <div class="field-group">
+                <label for="titre">Titre :</label>
+                <input
+                  id="titre"
+                  formControlName="titre"
+                  type="text"
+                  placeholder="Titre du circuit"
+                  [attr.aria-describedby]="circuitForm.get('titre')?.invalid && circuitForm.get('titre')?.touched ? 'titreError' : null"
+                />
+                <div *ngIf="circuitForm.get('titre')?.touched && circuitForm.get('titre')?.invalid" class="error" id="titreError" role="alert">
+                  Le titre est requis.
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="duree">Durée (en heures) :</label>
+                <input
+                  id="duree"
+                  formControlName="duree"
+                  type="number"
+                  placeholder="3"
+                  min="1"
+                  aria-describedby="dureeError"
+                  [attr.aria-describedby]="circuitForm.get('duree')?.touched && circuitForm.get('duree')?.invalid ? 'dureeError' : null"
+                />
+                <div *ngIf="circuitForm.get('duree')?.touched && circuitForm.get('duree')?.invalid" class="error" id="dureeError" role="alert" >
+                  <span *ngIf="circuitForm.get('duree')?.errors?.['required']">La durée est requise.</span>
+                  <span *ngIf="circuitForm.get('duree')?.errors?.['min']">Minimum : 1 heure.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <label for="description">Description :</label>
+            <textarea
+              id="description"
+              formControlName="description"
+              placeholder="Décrivez votre circuit..."
+              rows="8"
+              cols="50"
+              aria-describedby="descError"
+              [attr.aria-describedby]="circuitForm.get('description')?.touched && circuitForm.get('description')?.invalid ? 'descError' : null"
+            ></textarea>
+            <div *ngIf="circuitForm.get('description')?.touched && circuitForm.get('description')?.invalid" class="error" id="descError" role="alert">
+              La description est requise.
+            </div>
+
+            <!-- Étapes -->
+            <label>Étapes :</label>
+            <div class="etapes-group">
+              <div formArrayName="etapes" class="etapes-list">
+                <div class="etape-line" *ngFor="let etape of etapes.controls; let i = index">
+                  <input
+                    [formControlName]="i"
+                    type="text"
+                    placeholder="Étape {{ i + 1 }}"
+                    [attr.aria-label]="'Ajouter étape ' + (i + 1)"
+                  />
+                  <button type="button" class="btn-trash" (click)="supprimerEtape(i)" [attr.aria-label]="'Supprimer étape ' + (i + 1)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </div>
+              <button type="button" class="btn-add btn-add-etape" aria-describedby="addEtapeDesc" (click)="ajouterEtape()">
+                <i class="fas fa-plus-circle"></i> Ajouter une étape
+              </button>
+              <span id="addEtapeDesc" class="visually-hidden">Ajoute un champ pour une nouvelle étape</span>
+            </div>
+
+            <!-- Tags -->
+            <label>Tags :</label>
+            <div class="tags-group">
+              <div formArrayName="tags" class="tags-list">
+                <div class="tag-line" *ngFor="let tag of tags.controls; let i = index">
+                  <input
+                    [formControlName]="i"
+                    type="text"
+                    placeholder="Tag {{ i + 1 }}"
+                    [attr.aria-label]="'Ajouter tag ' + (i + 1)"
+                  />
+                  <button type="button" class="btn-trash" (click)="supprimerTag(i)" [attr.aria-label]="'Supprimer tag ' + (i + 1)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </div>
+              <button type="button" class="btn-add btn-add-tag" aria-describedby="addTagDesc" (click)="ajouterTag()">
+                <i class="fas fa-plus-circle"></i> Ajouter un tag
+              </button>
+              <span id="addTagDesc" class="visually-hidden">Ajoute un champ pour un nouveau tag</span>
+            </div>
+
+            <!-- Upload -->
+            <div class="field-group">
+              <label for="photoUrl">Uploader une photo :</label>
+              <input
+                id="photoUrl"
+                type="file"
+                (change)="onFileSelected($event)"
+                accept="image/*"
+                aria-describedby="photoError"
+                class="btn-upload"
+              />
+              <div
+                *ngIf="circuitForm.get('photoUrl')?.touched && circuitForm.get('photoUrl')?.invalid"
+                class="error"
+                id="photoError"
+                role="alert"
+              >
+                La photo est requise.
+              </div>
+            </div>
+
+            <!-- Boutons -->
+            <div class="buttons">
+              <button type="submit" [disabled]="circuitForm.invalid" class="btn-submit">
+                <i class="fas fa-paper-plane"></i> Envoyer
+              </button>
+              <button type="button" class="btn-cancel" (click)="showForm = false">
+                <i class="fas fa-times"></i> Annuler
+              </button>
+            </div>
+          </form>
+
+          <!-- Image preview -->
+          <div class="image-preview-wrapper">
+            <div class="popup-image" aria-live="polite" aria-atomic="true">
+              <img
+                class="circuit-image"
+                [src]="uploadedPhotoPreview || 'assets/images/circuit-preview.jpg'"
+                alt="Aperçu visuel du circuit proposé"
+                role="img"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
+
   </div>
+  <button class="btn-propose-circuit"  (click)="showForm = true">
+    <i class="fas fa-map-signs fa-lg icon-propose"></i>
+    Proposer un circuit
+  </button>
+
+
 </app-navbar>

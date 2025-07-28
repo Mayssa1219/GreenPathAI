@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar';
-import { CircuitResponse, CircuitService } from '../../../Services/CircuitService';
+import { CircuitRequest, CircuitResponse, CircuitService } from '../../../Services/CircuitService';
 import { Circuit } from '../../../models/Circuit';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Client } from '../../../models/client';
 import { ClientService } from '../../../Services/ClientService';
 import { FavorisService } from '../../../Services/FavorisService';
-import {VoiceAssistantComponent} from '../voice-assistant/voice-assistant';
+import { VoiceAssistantComponent } from '../voice-assistant/voice-assistant';
+import {PlanningService} from '../../../Services/PlanningService';
 
 @Component({
   selector: 'app-recherche-circuits',
@@ -19,6 +20,8 @@ import {VoiceAssistantComponent} from '../voice-assistant/voice-assistant';
 export class RechercheCircuits implements OnInit {
   circuits: Circuit[] = [];
   favorisIds: number[] = [];
+
+  message: string = '';
 
   userId: string = '';
   username = '';
@@ -40,13 +43,36 @@ export class RechercheCircuits implements OnInit {
   // Pagination
   currentPage = 1;
   totalPages = 1;
-  pageSize = 5;
+  pageSize = 6;
+  showForm = false;
+  circuitForm: FormGroup;
+  uploadedPhotoPreview: string | ArrayBuffer | null = null;
+  selectedFile: File | null = null;
+  reservationForm: FormGroup;
 
   constructor(
+    private fb: FormBuilder,
     private circuitService: CircuitService,
     private clientService: ClientService,
-    private favorisService: FavorisService
-  ) {}
+    private favorisService: FavorisService,
+  private reservationService: PlanningService
+
+) {
+    this.reservationForm = this.fb.group({
+      date: ['', Validators.required],
+      nbPersonnes: [1, [Validators.required, Validators.min(1)]],
+      message: ['']
+    });
+
+    this.circuitForm = this.fb.group({
+      photoUrl: [''],
+      titre: ['', Validators.required],
+      description: ['', Validators.required],
+      etapes: this.fb.array([this.fb.control('', Validators.required)]),
+      duree: ['', [Validators.required, Validators.min(1)]],
+      tags: this.fb.array([this.fb.control('', Validators.required)])
+    });
+  }
 
   ngOnInit(): void {
     const decoded = this.clientService.decodeToken();
@@ -65,7 +91,6 @@ export class RechercheCircuits implements OnInit {
         error: (err) => console.error('Erreur récupération client:', err)
       });
 
-      // Charger les favoris au démarrage
       this.favorisService.getFavoris(Number(this.userId)).subscribe({
         next: (circuits: Circuit[]) => {
           this.favorisIds = circuits.map(c => c.id);
@@ -161,7 +186,7 @@ export class RechercheCircuits implements OnInit {
     this.selectedTags = [];
     this.filterDuree = 'all';
     this.filterEcoScore = 0;
-    this.filterStatus = 'ALL';
+    this.filterStatus = 'all';
     this.currentPage = 1;
     this.loadCircuits();
   }
@@ -241,7 +266,7 @@ export class RechercheCircuits implements OnInit {
   }
 
   getStatusClass(status?: string): string {
-    switch(status) {
+    switch (status) {
       case 'PROPOSE': return 'badge-propose';
       case 'VALIDATED': return 'badge-validated';
       case 'REJECTED': return 'badge-rejected';
@@ -251,7 +276,7 @@ export class RechercheCircuits implements OnInit {
   }
 
   getStatusIcon(status?: string): string {
-    switch(status) {
+    switch (status) {
       case 'PROPOSE': return 'fas fa-hourglass-start';
       case 'VALIDATED': return 'fas fa-check-circle';
       case 'REJECTED': return 'fas fa-times-circle';
@@ -260,24 +285,133 @@ export class RechercheCircuits implements OnInit {
     }
   }
 
-  viewDetails(circuit: Circuit): void {
-    alert(`Voir détails pour ${circuit.titre}`);
-  }
   reserverCircuit(circuit: Circuit): void {
     alert(`Veuillez réserver pour accéder aux consignes du circuit : ${circuit.titre}`);
     // Exemple de redirection (si tu as un composant réservation)
     // this.router.navigate(['/reservation', circuit.id]);
   }
 
-  voirDetailsSansGuide(circuit: Circuit): void {
-    alert(`Consignes du circuit : ${circuit.consignes ?? 'Aucune consigne'}`);
-  }
-
   demarrerAssistanceVocale(circuit: Circuit): void {
     const consignes = circuit.consignes ?? 'Aucune consigne disponible pour ce circuit.';
     const synth = window.speechSynthesis;
+    window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(consignes);
     synth.speak(utterance);
   }
 
+  get etapes(): FormArray {
+    return this.circuitForm.get('etapes') as FormArray;
+  }
+
+  get tags(): FormArray {
+    return this.circuitForm.get('tags') as FormArray;
+  }
+
+  ajouterEtape(): void {
+    this.etapes.push(this.fb.control('', Validators.required));
+  }
+
+  supprimerEtape(index: number): void {
+    this.etapes.removeAt(index);
+  }
+
+  ajouterTag(): void {
+    this.tags.push(this.fb.control('', Validators.required));
+  }
+
+  supprimerTag(index: number): void {
+    this.tags.removeAt(index);
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.selectedFile = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.uploadedPhotoPreview = reader.result;
+      };
+      reader.readAsDataURL(this.selectedFile);
+    } else {
+      this.selectedFile = null;
+      this.uploadedPhotoPreview = null;
+    }
+  }
+
+  submitForm(): void {
+    if (this.circuitForm.invalid) {
+      this.circuitForm.markAllAsTouched();
+      return;
+    }
+
+    const formValue = this.circuitForm.value;
+    const formData = new FormData();
+
+    // Append form fields as JSON
+    formData.append('request', new Blob([JSON.stringify({
+      clientId: Number(this.userId),
+      titre: formValue.titre,
+      description: formValue.description,
+      etapes: formValue.etapes.join('; '),
+      duree: formValue.duree,
+      tags: formValue.tags
+        .map((tag: string) => tag.trim())
+        .filter((t: string, i: number, arr: string[]) => t && arr.indexOf(t) === i),
+      niveauEcoresponsabilite: 0,
+    })], { type: 'application/json' }));
+
+    // Append file if selected
+    if (this.selectedFile) {
+      formData.append('file', this.selectedFile);
+    }
+
+    this.circuitService.proposerCircuit(formData).subscribe({
+      next: () => {
+        alert('Circuit proposé avec succès');
+        this.circuitForm.reset();
+        this.selectedFile = null;
+        this.uploadedPhotoPreview = null;
+        while (this.etapes.length > 1) this.etapes.removeAt(1);
+        while (this.tags.length > 1) this.tags.removeAt(1);
+      },
+      error: (err) => {
+        console.error('Erreur lors de la proposition:', err);
+        alert('Erreur lors de la proposition');
+      }
+    });
+  }
+  selectedCircuit: Circuit | null = null;
+  showReservationForm=false;
+  openReservationForm(circuit: Circuit): void {
+    console.log('Ouverture du formulaire de réservation pour :', circuit);
+    this.selectedCircuit = circuit;
+    this.showReservationForm = true;
+  }
+
+  closeReservationPopup() {
+    this.showReservationForm = false;
+    this.reservationForm.reset();
+    this.selectedCircuit = null;
+  }
+  submitReservation() {
+    if (!this.selectedCircuit || !Number(this.userId)) return;
+
+    const reservationData = {
+      clientId: Number(this.userId),
+      circuitId: this.selectedCircuit.id,
+      dateReservation: this.reservationForm.value.date,
+      nbPersonnes: this.reservationForm.value.nbPersonnes,
+      message: this.reservationForm.value.message
+    };
+
+    this.reservationService.reserverCircuit(reservationData).subscribe({
+      next: () => {
+        alert("Réservation réussie !");
+        this.closeReservationPopup();
+      },
+      error: () => {
+        alert("Erreur lors de la réservation.");
+      }
+    });
+  }
 }

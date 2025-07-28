@@ -11,7 +11,16 @@ export interface CircuitResponse {
   totalElements: number;
   size: number;
 }
-
+export interface CircuitRequest {
+  titre: string;
+  description: string;
+  etapes: string;           // ou string[] selon backend
+  duree: number;
+  tags: string[];
+  clientId: number;
+  niveauEcoresponsabilite?: number;
+  photoUrl?: string;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -125,4 +134,10 @@ export class CircuitService {
 
     return this.http.get(`${this.apiUrl}/search`, { params, responseType: 'text' });
   }
+  proposerCircuit(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/proposer`, formData, {
+      headers: { 'Accept': '*/*' } // No Content-Type to let browser set it
+    });
+  }
+
 }

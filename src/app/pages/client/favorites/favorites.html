@@ -24,10 +24,10 @@
         Aucune visite récente.
       </div>
 
-      <div *ngFor="let circuit of historique" class="card">
-        <h3>{{ circuit.titre }}</h3>
-        <p>{{ circuit.description }}</p>
-        <button (click)="ajouterFavori(circuit.id)">Ajouter aux favoris</button>
+      <div *ngFor="let historique of historique" class="card">
+        <h3>{{ historique.typeActivite }}</h3>
+        <p>{{ historique.description }}</p>
+        <p>{{ historique.date }}</p>
       </div>
 
       <button class="vider" (click)="viderHistorique()"> <i class="fa-solid fa-trash"></i>

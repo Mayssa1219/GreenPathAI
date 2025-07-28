@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FavorisService } from '../../../Services/FavorisService';
 import { ClientService } from '../../../Services/ClientService';
 import { Client } from '../../../models/client';
+import {Historique, HistoriqueService} from '../../../Services/HistoriqueService';
 
 @Component({
   selector: 'app-favorites',
@@ -25,11 +26,10 @@ export class FavoritesComponent implements OnInit {
   username = '';
   clientData: Client | null = null;
   favoris: Circuit[] = [];
-  historique: Circuit[] = [];
   loading = false;
   errorMessage = '';
 
-  constructor(private favorisService: FavorisService, private clientService: ClientService) {}
+  constructor(private historiqueService:HistoriqueService,private favorisService: FavorisService, private clientService: ClientService) {}
 
   ngOnInit(): void {
     const decoded = this.clientService.decodeToken();
@@ -49,6 +49,7 @@ export class FavoritesComponent implements OnInit {
         error: (err) => console.error('Erreur récupération client:', err)
       });
     }
+    this.chargerHistorique();
     this.chargerFavoris();
   }
 
@@ -89,8 +90,23 @@ export class FavoritesComponent implements OnInit {
       error: () => alert('Erreur lors de l\'ajout du favori')
     });
   }
+  historique: Historique[] = [];
+
+  chargerHistorique(): void {
+    if (!this.userId) return;
+    this.historiqueService.getHistoriqueByClient(Number(this.userId)).subscribe({
+      next: (data) => this.historique = data,
+      error: (err) => console.error('Erreur chargement historique', err)
+    });
+  }
+
 
   viderHistorique(): void {
-    this.historique = [];
+    if (!this.userId) return;
+    this.historiqueService.viderHistoriqueClient(Number(this.userId)).subscribe({
+      next: () => this.historique = [],
+      error: () => alert("Erreur lors du vidage de l'historique.")
+    });
   }
+
 }

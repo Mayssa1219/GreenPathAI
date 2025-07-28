@@ -1,6 +1,7 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import {Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, OnInit} from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import {TawkService} from '../../Services/TawkService';
  // Crée ce service comme montré précédemment
 
 interface Circuit {
@@ -17,7 +18,10 @@ interface Circuit {
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
-export class HomeComponent implements AfterViewInit, OnDestroy {
+export class HomeComponent implements AfterViewInit, OnDestroy,OnInit {
+
+
+
   circuits: Circuit[] = [
     {
       image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
@@ -70,7 +74,11 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     return Math.max(0, this.circuits.length - this.visibleCount);
   }
 
-  constructor() {}
+  constructor(private tawk: TawkService) {}
+
+  ngOnInit(): void {
+    this.tawk.load();
+  }
 
   ngAfterViewInit() {
     this.updateVisibleCount();
