@@ -132,6 +132,13 @@ export class ClientService {
     }
   }
 
+  updateClientPhoto(clientId: number, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.put(`${this.apiUrl}/${clientId}/photo`, formData);
+  }
+
   getUserStatut(): string | null {
     const token = this.getToken();
     if (!token) return null;

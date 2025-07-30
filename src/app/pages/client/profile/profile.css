@@ -43,7 +43,12 @@
 .profil-card:hover {
   box-shadow: 0 12px 35px rgba(98, 167, 117, 0.18);
 }
-
+.profile-photo-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 130px;
+  height: 130px;
+}
 /* Avatar */
 .avatar {
   width: 120px;

@@ -5,7 +5,18 @@
 
     <!-- Carte infos à gauche -->
     <div class="profil-card profil-info">
-      <img class="avatar" [src]="photoUrl" alt="Photo de profil" />
+      <label class="avatar-wrapper" for="photoInput" title="Cliquer pour changer la photo" style="cursor: pointer;">
+        <img class="avatar" [src]="photoUrl" alt="Photo de profil" />
+      </label>
+
+      <input
+        type="file"
+        id="photoInput"
+        accept="image/*"
+        hidden
+        (change)="onPhotoSelected($event)"
+      />
+
       <h2 class="client-name">{{ username }}</h2>
 
       <p class="client-email">

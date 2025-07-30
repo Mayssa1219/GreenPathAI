@@ -1,0 +1,83 @@
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+/>
+
+<div
+  class="chatbot-icon pulse"
+  (click)="toggleChat()"
+  title="Parler avec GreenBot"
+  role="button"
+  aria-label="Ouvrir le chat GreenBot"
+  tabindex="0"
+  (keyup.enter)="toggleChat()"
+>
+  <i class="fas fa-leaf"></i>
+</div>
+
+<div
+  class="chatbot-popup"
+  *ngIf="showChat"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="chatbotTitle"
+>
+  <div class="chatbot-header">
+  <span id="chatbotTitle" class="chatbot-title-group">
+    <i class="fa-solid fa-seedling"></i> GreenBot
+    <button
+      class="mute-btn"
+      (click)="stopVoice()"
+      aria-label="Couper la lecture vocale"
+    >
+      <i class="fa-solid fa-volume-xmark"></i>
+    </button>
+  </span>
+
+    <button class="close-btn" (click)="toggleChat()" aria-label="Fermer le chat">
+      <i class="fa-solid fa-times"></i>
+    </button>
+  </div>
+
+
+  <div
+    class="chatbot-messages"
+    #scrollContainer
+    tabindex="0"
+    aria-live="polite"
+    aria-atomic="false"
+  >
+    <div
+      *ngFor="let msg of messages"
+      class="message"
+      [ngClass]="msg.sender"
+      role="listitem"
+    >
+      <span>{{ msg.text }}</span>
+    </div>
+  </div>
+
+  <div class="chatbot-input">
+    <input
+      type="text"
+      [(ngModel)]="userInput"
+      placeholder="Posez votre question..."
+      autocomplete="off"
+      aria-label="Message utilisateur"
+      (keyup.enter)="sendMessage()"
+    />
+    <button (click)="sendMessage()" aria-label="Envoyer le message">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+
+    <button
+      class="mic-btn"
+      (click)="startListening()"
+      aria-label="Commencer la reconnaissance vocale"
+      title="Parler"
+      type="button"
+    >
+      <i class="fas fa-microphone"></i>
+    </button>
+  </div>
+</div>

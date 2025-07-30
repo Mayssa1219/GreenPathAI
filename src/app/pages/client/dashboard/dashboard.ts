@@ -15,10 +15,11 @@ import {ActivatedRoute, RouterModule} from '@angular/router';
 import {EvenementLocal, PlanningDto, PlanningService} from '../../../Services/PlanningService';
 import {FormsModule} from '@angular/forms';
 import {Goal, GoalService} from '../../../Services/GoalService';
+import {ChatbotClient} from '../chatbot-client/chatbot-client';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NavbarComponent, CommonModule,NgFor,RouterModule,FormsModule],
+  imports: [NavbarComponent, CommonModule,NgFor,RouterModule,FormsModule, ChatbotClient],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })

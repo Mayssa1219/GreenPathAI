@@ -274,5 +274,23 @@ export class Profile implements OnInit {
       error: err => console.error("Erreur lors du changement de mot de passe", err)
     });
   }
+  onPhotoSelected(event: Event): void {
+    const fileInput = event.target as HTMLInputElement;
+    const file = fileInput.files?.[0];
+
+    if (file && this.client?.id) {
+      this.clientService.updateClientPhoto(this.client.id, file).subscribe({
+        next: (updatedClient) => {
+          this.client = updatedClient;
+          this.photoUrl = updatedClient.photoUrl;
+          alert('Photo mise à jour avec succès ✅');
+        },
+        error: (err) => {
+          console.error('Erreur mise à jour photo', err);
+          alert('Erreur lors de la mise à jour de la photo.');
+        }
+      });
+    }
+  }
 
 }
