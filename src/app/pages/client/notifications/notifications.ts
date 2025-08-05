@@ -3,6 +3,9 @@ import { NotificationService } from '../../../Services/NotificationService';
 import { AppNotification, NotificationType } from '../../../models/Notification';
 import { CommonModule } from '@angular/common';
 import {animate, style, transition, trigger} from '@angular/animations';
+import {catchError} from 'rxjs/operators';
+import {DashboardService} from '../../../Services/DashboardService';
+import {of} from 'rxjs';
 @Component({
   selector: 'app-notifications',
   standalone: true,
@@ -29,7 +32,7 @@ export class NotificationsComponent implements OnInit {
 
   loading = false;
 
-  constructor(private notificationService: NotificationService) {}
+  constructor(private dashboardService:DashboardService,private notificationService: NotificationService) {}
 
   ngOnInit() {
     this.loadNotifications();
@@ -68,12 +71,25 @@ export class NotificationsComponent implements OnInit {
   markAsRead(notification: AppNotification) {
     if (notification.read) return;
 
-    this.notificationService.markAsRead(notification.id).subscribe({
+    this.notificationService.markAsRead(notification.id).pipe(
+      catchError(err => {
+        console.error('Erreur lors du marquage comme lu :', err);
+        // fallback : par exemple, rafraîchir les alertes du tableau de bord
+        this.dashboardService.getAlerts().subscribe({
+          next: alerts => {
+            // tu peux afficher une notification visuelle ici si besoin
+            console.log('Alertes rechargées en fallback', alerts);
+          },
+          error: e => console.warn('Échec du fallback alert reload', e)
+        });
+        // tu peux aussi retourner un observable vide pour éviter de propager l'erreur
+        return of(void 0);
+      })
+    ).subscribe({
       next: () => {
         notification.read = true;
-        this.updateFiltered(); // Met à jour l'affichage
-      },
-      error: (err) => console.error('Erreur lors du marquage comme lu :', err)
+        this.updateFiltered(); // mise à jour de l'affichage
+      }
     });
   }
 

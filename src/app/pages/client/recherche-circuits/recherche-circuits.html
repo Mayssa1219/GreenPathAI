@@ -109,7 +109,32 @@
               {{ circuit.status?.toLowerCase() || 'inconnu' }}
             </span>
           </p>
+          <!-- Pas d'avis encore -->
+          <div *ngIf="!existingRatingByUser[circuit.id]; else ratedBlock">
+            <div class="mini-star-rating" role="button" tabindex="0" aria-label="Donner un avis" (click)="openPopup(circuit.id)">
+              <i class="far fa-star"></i>
+              <i class="far fa-star"></i>
+              <i class="far fa-star"></i>
+              <i class="far fa-star"></i>
+              <i class="far fa-star"></i>
+            </div>
+          </div>
 
+          <!-- Avis déjà donné -->
+          <ng-template #ratedBlock>
+            <div class="mini-star-rating"
+                 [attr.aria-label]="getAriaLabel(circuit.id)"
+                 role="button" tabindex="0"
+                 (click)="openPopup(circuit.id)"
+                 title="Cliquez pour modifier votre avis">
+              <i *ngFor="let star of stars"
+                 class="fa-star"
+                 [class.fas]="star <= existingRatingByUser[circuit.id].note"
+                 [class.far]="star > existingRatingByUser[circuit.id].note">
+              </i>
+
+            </div>
+          </ng-template>
           <!-- Infos guide -->
           <p *ngIf="circuit.guide" class="guide-info">
             Guide : {{ circuit.guide.nom }}
@@ -119,6 +144,7 @@
               class="guide-avatar"
             />
           </p>
+
           <p *ngIf="!circuit.guide" class="no-guide">Pas de guide</p>
           <button (click)="toggleFavoris(circuit)">
             {{ isFavori(circuit) ? 'Retirer des favoris' : 'Ajouter aux favoris' }}
@@ -146,7 +172,43 @@
             </div>
 
           </div>
+
+
         </div>
+        <div class="popupFavoris-overlay" *ngIf="showPopup">
+          <div class="popupFavoris-content" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+            <h2 id="popupTitleFavoris">Donner votre avis</h2>
+
+            <!-- Évaluation par étoiles -->
+            <div class="favoris-star-rating">
+                <i *ngFor="let star of stars"
+                   class="fa-star"
+                   [class.fas]="star <= selectedRating"
+                   [class.far]="star > selectedRating"
+                   (click)="setRating(star)"
+                   tabindex="0"
+                   role="button"
+                   [attr.aria-label]="'Note ' + star + ' étoile(s)'"></i>
+
+            </div>
+
+            <!-- Champ commentaire -->
+            <textarea
+              class="favoris-textarea"
+              [(ngModel)]="commentaire"
+              placeholder="Votre commentaire..."
+              rows="4"
+              aria-label="Champ de commentaire">
+    </textarea>
+
+            <!-- Boutons action -->
+            <div class="popupFavoris-buttons">
+              <button class="btn-favoris-submit" (click)="submitAvis()">Envoyer</button>
+              <button class="btn-favoris-cancel" (click)="closePopup()">Annuler</button>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div class="pagination" *ngIf="totalPages > 1">

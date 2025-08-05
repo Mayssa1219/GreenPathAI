@@ -1,0 +1,12 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer">
+
+<div class="map-container" role="region" aria-label="Carte des emplacements">
+  <div id="map"></div>
+
+  <!-- Légende textuelle sous la carte -->
+  <div class="location-list">
+    <div *ngFor="let loc of locations" class="map-marker" [ngClass]="loc.type">
+      <i class="fas fa-map-marker-alt"></i> {{ loc.label }}
+    </div>
+  </div>
+</div>

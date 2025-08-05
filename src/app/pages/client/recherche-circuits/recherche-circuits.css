@@ -600,6 +600,128 @@ textarea {
 .popupReservation-content button[type="button"]:hover {
   background-color: #c0392b;
 }
+.popupFavoris-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.5);
+  display: flex; justify-content: center; align-items: center;
+  padding: 10px;
+  z-index: 1000;
+  overflow-y: auto;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.popupFavoris-content {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.popupFavoris-content h2 {
+  margin-top: 0;
+  font-size: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.favoris-star-rating {
+  display: flex;
+  gap: 8px;
+  margin: 15px 0;
+  justify-content: center;
+}
+
+.favoris-star-rating .fas,
+.favoris-star-rating .far {
+  font-size: 32px;
+  color: #ffc107;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.favoris-star-rating .fas:hover,
+.favoris-star-rating .far:hover {
+  transform: scale(1.2);
+}
+
+.favoris-textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  font-size: 14px;
+  color: #444;
+}
+
+.popupFavoris-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.btn-favoris-submit,
+.btn-favoris-cancel {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-favoris-submit {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-favoris-submit:hover {
+  background-color: #218838;
+}
+
+.btn-favoris-cancel {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-favoris-cancel:hover {
+  background-color: #c82333;
+}
+.mini-star-rating {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 18px;
+  color: #ffcc00; /* Jaune doré */
+  transition: transform 0.2s ease-in-out;
+}
+
+.mini-star-rating:hover {
+  transform: scale(1.05);
+}
+
+.mini-star-rating i {
+  margin-right: 3px;
+  transition: color 0.2s ease-in-out;
+}
+
+.mini-star-rating .fas {
+  color: #ffcc00; /* Étoile pleine */
+}
+
+.mini-star-rating .far {
+  color: #d3d3d3; /* Étoile vide (gris clair) */
+}
+
+@media (max-width: 600px) {
+  .mini-star-rating {
+    font-size: 16px;
+  }
+}
+
 
 /* Animations */
 @keyframes fadeIn {

@@ -9,6 +9,8 @@ import { ClientService } from '../../../Services/ClientService';
 import { FavorisService } from '../../../Services/FavorisService';
 import { VoiceAssistantComponent } from '../voice-assistant/voice-assistant';
 import {PlanningService} from '../../../Services/PlanningService';
+import {HttpClient} from '@angular/common/http';
+import {AvisRequest, AvisService} from '../../../Services/AvisService';
 
 @Component({
   selector: 'app-recherche-circuits',
@@ -55,7 +57,8 @@ export class RechercheCircuits implements OnInit {
     private circuitService: CircuitService,
     private clientService: ClientService,
     private favorisService: FavorisService,
-  private reservationService: PlanningService
+  private reservationService: PlanningService,
+    private avisService:AvisService
 
 ) {
     this.reservationForm = this.fb.group({
@@ -100,6 +103,7 @@ export class RechercheCircuits implements OnInit {
     }
 
     this.loadCircuits();
+    this.loadAvisClient();
   }
 
   // ---- Calculs dynamiques ----
@@ -414,4 +418,99 @@ export class RechercheCircuits implements OnInit {
       }
     });
   }
+  avisNotes: { [circuitId: number]: number } = {};
+  avisCommentaires: { [circuitId: number]: string } = {};
+  showPopup: boolean = false;
+  popupCircuitId: number | null = null;
+
+  stars: number[] = [1, 2, 3, 4, 5];
+
+// Ouvre la popup pour un circuit donné
+  openPopup(circuitId: number): void {
+    this.popupCircuitId = circuitId;
+    this.showPopup = true;
+
+    // Préremplir si déjà noté
+    this.selectedRating = this.avisNotes[circuitId] || 0;
+    this.commentaire = this.avisCommentaires[circuitId] || '';
+  }
+
+// Ferme la popup
+  closePopup(): void {
+    this.showPopup = false;
+    this.popupCircuitId = null;
+    this.resetForm();
+  }
+
+  selectedRating: number = 0;
+  commentaire: string = '';
+
+// Sélection d'une note (étoile)
+  setRating(star: number): void {
+    this.selectedRating = star;
+    if (this.popupCircuitId !== null) {
+      this.avisNotes[this.popupCircuitId] = star;
+    }
+  }
+
+// Soumettre l’avis depuis le popup
+  submitAvis(): void {
+    if (this.popupCircuitId === null) return;
+
+    const note = this.selectedRating;
+    const commentaire = this.commentaire.trim();
+
+    if (!note || !commentaire) {
+      alert('Veuillez donner une note et un commentaire.');
+      return;
+    }
+
+    const avis: AvisRequest = {
+      clientId: Number(this.userId),
+      circuitId: this.popupCircuitId,
+      note,
+      commentaire
+    };
+
+    this.avisService.ajouterAvis(avis).subscribe({
+      next: () => {
+        alert('Merci pour votre avis !');
+        this.avisNotes[this.popupCircuitId!] = 0;
+        this.avisCommentaires[this.popupCircuitId!] = '';
+        this.closePopup();
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Erreur lors de l\'envoi de l\'avis.');
+      }
+    });
+  }
+  existingRatingByUser: { [circuitId: number]: { note: number; commentaire: string } } = {};
+
+// Réinitialise les champs internes
+  private resetForm(): void {
+    this.selectedRating = 0;
+    this.commentaire = '';
+  }
+  loadAvisClient(): void {
+    this.avisService.getAvisByUser(Number(this.userId)).subscribe({
+      next: (avisList) => {
+        for (let avis of avisList) {
+          this.existingRatingByUser[avis.circuitId] = {
+            note: avis.note,
+            commentaire: avis.commentaire
+          };
+        }
+      },
+      error: (err) => console.error('Erreur de chargement des avis :', err)
+    });
+  }
+  getAriaLabel(circuitId: number): string {
+    const rating = this.existingRatingByUser[circuitId]?.note;
+    return rating ? `Votre note : ${rating} étoiles` : 'Aucune note';
+  }
+  modifierAvis(circuitId: number) {
+    // Même popup que openPopup, mais pré-rempli avec existingRatingByUser[circuitId]
+  }
+
 }

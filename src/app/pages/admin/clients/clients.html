@@ -1,0 +1,163 @@
+<app-sidebar-header>
+  <div class="client-management">
+    <div class="top-bar">
+      <h2>Gestion des clients</h2>
+      <button class="add-client-btn" (click)="openAddModal()">
+        <i class="fas fa-user-plus"></i> Ajouter un client
+      </button>
+    </div>
+
+    <!-- Barre de recherche + filtre -->
+    <div class="filters">
+      <input
+        type="text"
+        placeholder="Recherche par nom ou email..."
+        [(ngModel)]="searchText"
+        aria-label="Recherche clients"
+      />
+      <select [(ngModel)]="statutFilter" aria-label="Filtrer par statut">
+        <option value="">Tous les statuts</option>
+        <option value="actif">Actif</option>
+        <option value="inactif">Inactif</option>
+        <option value="suspendu">Suspendu</option>
+      </select>
+      <button (click)="onSearch()">Rechercher</button>
+    </div>
+
+    <!-- Table des clients -->
+    <div class="table-wrapper">
+      <table class="client-table" aria-label="Liste des clients">
+        <thead>
+        <tr>
+          <th>Photo</th>
+          <th>Nom complet</th>
+          <th>Email</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let client of clients">
+          <td>
+            <div class="photo-wrapper">
+              <img
+                [src]="client.photoUrl || 'assets/default-avatar.png'"
+                alt="Photo de {{ client.fullname }}"
+                class="client-photo"
+              />
+            </div>
+          </td>
+          <td>{{ client.fullname }}</td>
+          <td>{{ client.email }}</td>
+          <td>
+            <span [class]="client.statut | lowercase">{{ client.statut }}</span>
+          </td>
+          <td class="actions-cell">
+            <button class="btn edit" (click)="openEditModal(client)">Modifier</button>
+            <button class="btn delete" (click)="deleteClient(client)">Supprimer</button>
+          </td>
+        </tr>
+        <tr *ngIf="!clients.length && !loading">
+          <td colspan="5" class="empty">Aucun client trouvé.</td>
+        </tr>
+        </tbody>
+      </table>
+      <div *ngIf="loading" class="loading-indicator">Chargement...</div>
+    </div>
+
+    <!-- Pagination simple -->
+    <div class="pagination">
+      <button (click)="previousPage()" [disabled]="currentPage === 0">Précédent</button>
+      <span>Page {{ currentPage + 1 }} / {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage + 1 >= totalPages">Suivant</button>
+    </div>
+
+    <!-- Modal édition -->
+    <div class="modal-backdrop" *ngIf="editingClient" role="dialog" aria-modal="true" aria-labelledby="edit-client-title">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 id="edit-client-title">Modifier le client</h3>
+          <button class="close-btn" aria-label="Fermer" (click)="closeModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="photo-section">
+            <div class="photo-preview">
+              <img
+                [src]="previewPhoto || editingClient.photoUrl || 'assets/default-avatar.png'"
+                alt="Aperçu photo"
+              />
+              <label class="upload-btn">
+                Changer la photo
+                <input type="file" accept="image/*" (change)="onPhotoSelected($event)" />
+              </label>
+            </div>
+          </div>
+          <div class="fields">
+            <div class="field">
+              <label>Nom complet</label>
+              <input type="text" [(ngModel)]="editableClient.fullname" />
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="email" [(ngModel)]="editableClient.email" />
+            </div>
+            <div class="field">
+              <label>Statut</label>
+              <select [(ngModel)]="editableClient.statut">
+                <option value="actif">Actif</option>
+                <option value="inactif">Inactif</option>
+                <option value="suspendu">Suspendu</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn cancel" (click)="closeModal()">Annuler</button>
+          <button class="btn save" (click)="saveEdit()">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal ajout -->
+    <div class="modal-backdrop" *ngIf="addingClient" role="dialog" aria-modal="true" aria-labelledby="add-client-title">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 id="add-client-title">Ajouter un client</h3>
+          <button class="close-btn" aria-label="Fermer" (click)="closeAddModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="fields">
+            <div class="field">
+              <label>Nom complet</label>
+              <input type="text" [(ngModel)]="newClient.fullname" />
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="email" [(ngModel)]="newClient.email" />
+            </div>
+            <div class="field">
+              <label>Mot de passe</label>
+              <input type="password" [(ngModel)]="newClient.password" />
+            </div>
+            <div class="field">
+              <label>Statut</label>
+              <select [(ngModel)]="newClient.statut">
+                <option value="actif">Actif</option>
+                <option value="inactif">Inactif</option>
+                <option value="suspendu">Suspendu</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Photo</label>
+              <input type="file" accept="image/*" (change)="onNewClientPhotoSelected($event)" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn cancel" (click)="closeAddModal()">Annuler</button>
+          <button class="btn save" (click)="saveNewClient()">Créer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-sidebar-header>

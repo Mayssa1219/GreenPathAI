@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { catchError } from 'rxjs/operators';
@@ -12,6 +12,16 @@ interface DecodedToken extends JwtPayload {
   role?: string;
   status?: string;
   [key: string]: any;
+}
+export interface Page<T> {
+  content: T[];           // Les éléments de la page
+  totalElements: number;  // Nombre total d'éléments dans toute la collection
+  totalPages: number;     // Nombre total de pages disponibles
+  size: number;           // Taille d’une page (nb d’éléments)
+  number: number;         // Numéro de la page actuelle (0-based)
+  numberOfElements: number; // Nombre d’éléments dans cette page (<= size)
+  first: boolean;         // Est-ce la première page ?
+  last: boolean;          // Est-ce la dernière page ?
 }
 
 @Injectable({
@@ -49,11 +59,12 @@ export class ClientService {
   }
 
 
-  updateClient(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, data, this.getAuthHeaders()).pipe(
+  updateClient(id: number, data: Partial<Client>): Observable<Client> {
+    return this.http.put<Client>(`${this.apiUrl}/${id}`, data, this.getAuthHeaders()).pipe(
       catchError(this.handleError)
     );
   }
+
 
   changerMotDePasse(id: number, oldPassword: string, newPassword: string): Observable<void> {
     const body = {
@@ -150,4 +161,7 @@ export class ClientService {
       return null;
     }
   }
+
+
+
 }

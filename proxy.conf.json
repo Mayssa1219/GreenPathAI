@@ -19,6 +19,7 @@
       "User-Agent": "GreenPathAI/1.0 (contact@tonsite.tn)"
     }
   },
+
   "/api": {
     "target": "http://localhost:8081",
     "secure": false,

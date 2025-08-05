@@ -17,4 +17,5 @@ export interface Client {
   favoris?: number[];
   lieuxVisites?: number[];
   roles?: string[];
+  createdAt?: string;
 }

@@ -25,7 +25,9 @@
                 "output": "/"              }
             ],
             "styles": [
+              "src/custom-theme.scss",
               "src/styles.css",
+              "node_modules/leaflet/dist/leaflet.css",
               "node_modules/flatpickr/dist/flatpickr.min.css"
             ]
           },

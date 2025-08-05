@@ -1,0 +1,146 @@
+<app-sidebar-header>
+  <div class="dashboard-container" role="main" aria-label="Tableau de bord administrateur">
+
+    <!-- En-tête -->
+    <header class="dashboard-header">
+      <h1 class="dashboard-title">Tableau de bord GreenPathAI</h1> <br>
+      <span class="dashboard-subtitle">Vue d’ensemble de l’activité</span>
+    </header>
+    <!-- ✅ TOAST NOTIFICATION -->
+    <div class="toast" *ngIf="showToast">
+      <span class="material-symbols-rounded">notifications</span>
+      {{ toastMessage }}
+      <button class="close-toast" (click)="closeToast()">×</button>
+    </div>
+
+    <!-- Cartes Statistiques -->
+    <section class="stat-cards" aria-label="Statistiques principales">
+      <div class="stat-card green">
+        <span class="material-symbols-rounded stat-icon">group</span>
+        <div class="stat-content">
+          <h3>{{ totalUsers }}</h3>
+          <p>Total Utilisateurs</p>
+        </div>
+      </div>
+      <div class="stat-card blue">
+        <span class="material-symbols-rounded stat-icon">map</span>
+        <div class="stat-content">
+          <h3>{{ totalCircuits }}</h3>
+          <p>Circuits publiés</p>
+        </div>
+      </div>
+      <div class="stat-card purple">
+        <span class="material-symbols-rounded stat-icon">reviews</span>
+        <div class="stat-content">
+          <h3>{{ totalReviews }}</h3>
+          <p>Avis Clients</p>
+        </div>
+      </div>
+      <div class="stat-card pink">
+        <span class="material-symbols-rounded stat-icon">new_releases</span>
+        <div class="stat-content">
+          <h3>{{ recentCircuits }}</h3>
+          <p>Circuits Récents</p>
+        </div>
+      </div>
+      <div class="stat-card orange">
+        <span class="material-symbols-rounded stat-icon">favorite</span>
+        <div class="stat-content">
+          <h3>{{ totalFavorites }}</h3>
+          <p>Favoris enregistrés</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Graphiques -->
+    <section class="charts">
+      <div class="chart-card">
+        <h2>Statistiques de Réservations</h2>
+        <canvas
+          baseChart
+          [datasets]="reservationData"
+          [labels]="months"
+          chartType="line">
+        </canvas>
+      </div>
+
+      <div class="chart-card">
+        <h2>Répartition des utilisateurs</h2>
+        <canvas
+          baseChart
+          [datasets]="userDistribution"
+          [labels]="roles"
+          chartType="doughnut">
+        </canvas>
+      </div>
+
+      <!-- Courbe satisfaction client -->
+      <div class="chart-card" style="margin-top: 2rem;">
+        <h2>Satisfaction Moyenne des Clients</h2>
+        <canvas
+          baseChart
+          [datasets]="satisfactionData"
+          [labels]="months"
+          [options]="chartOptions"
+          chartType="line">
+        </canvas>
+      </div>
+    </section>
+
+
+    <!-- Table des utilisateurs inscrits -->
+    <section class="user-table-section">
+      <h2>Derniers utilisateurs inscrits</h2>
+      <table class="user-table">
+        <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Email</th>
+          <th>Date d'inscription</th>
+          <th>Statut</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let user of latestUsers">
+          <td>{{ user.fullname }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.createdAt | date:'dd/MM/yyyy' }}</td>
+          <td>
+          <span class="status" [ngClass]="user.statut ? 'actif' : 'inactif'">
+            {{ user.statut ? 'Actif' : 'Inactif' }}
+          </span>
+          </td>
+
+        </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Carte des localisations -->
+    <section class="map-section">
+      <h2>Localisation des utilisateurs</h2>
+      <app-map [locations]="userLocations" class="dashboard-map"></app-map>
+    </section>
+
+    <!-- Widgets supplémentaires -->
+    <section class="extra-widgets">
+      <div class="widget-card">
+        <h3>Alertes récentes</h3>
+        <ul>
+          <li *ngFor="let alert of alerts">{{ alert.message }}</li>
+        </ul>
+      </div>
+      <div class="widget-card">
+        <h3>Top Circuits</h3>
+        <ul>
+          <li *ngFor="let circuit of topCircuits">{{ circuit.name }} ({{ circuit.score }}★)</li>
+        </ul>
+      </div>
+      <div class="widget-card">
+        <h3>Feedback du jour</h3>
+        <p>{{ feedbackMessage }}</p>
+      </div>
+    </section>
+
+  </div>
+</app-sidebar-header>

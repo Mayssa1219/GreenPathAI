@@ -1,0 +1,172 @@
+<!-- layout-admin.component.html -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+
+<div class="app-layout" role="application">
+  <!-- Navbar -->
+  <nav class="site-nav" [class.sidebar-collapsed]="collapsed" role="navigation" aria-label="Barre de navigation principale">
+    <div class="navbar-title">
+      <span class="logo-circle">G</span>
+      <span class="brand-name">GreenPathAI Admin</span>
+
+      <!-- Bouton arrêt voix -->
+      <span
+        class="material-symbols-rounded stop-voice-icon speak-icon"
+        (click)="stopVoice()"
+        title="Arrêter la lecture vocale">
+      volume_off
+    </span>
+    </div>
+
+    <div class="navbar-right">
+      <div class="notif-container" (click)="toggleNotifications()" title="Voir les notifications">
+        <span class="material-symbols-rounded notif-icon">notifications</span>
+        <span
+          class="notif-badge"
+          [class.empty]="unreadCount === 0"
+          *ngIf="true">{{ unreadCount }}</span>
+      </div>
+      <div class="profile-container" title="Mon profil" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false">
+        <img [src]="adminPhotoUrl" alt="Photo de profil" class="profile-avatar" />
+      </div>
+    </div>
+  </nav>
+  <app-notifications
+    *ngIf="showNotifications"
+    class="notification-panel"
+    (closePanel)="showNotifications = false">
+  </app-notifications>
+
+
+  <div class="container">
+    <!-- Sidebar -->
+    <aside
+      [class.collapsed]="collapsed"
+      class="sidebar"
+      role="complementary"
+      aria-label="Menu de navigation principal"
+      id="sidebar"
+    >
+      <div class="sidebar-header">
+        <button (click)="toggleSidebar()" class="sidebar-toggle">
+          <span class="material-symbols-rounded">chevron_left</span>
+        </button>
+      </div>
+
+      <form class="search-form" role="search" aria-label="Recherche dans le menu admin">
+        <span class="material-symbols-rounded" aria-hidden="true">search</span>
+        <input
+          type="search"
+          placeholder="Rechercher..."
+          aria-label="Recherche dans le menu"
+          (keyup.enter)="performMenuSearch(searchInput.value)"
+          #searchInput
+        />
+      </form>
+
+      <ul class="menu-list" role="menu">
+        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a role="menuitem" routerLink="/admin-dashboard" class="menu-link" tabindex="0">
+            <span class="material-symbols-rounded">dashboard</span>
+            <span class="menu-label">Tableau de bord</span>
+          </a>
+        </li>
+
+        <li class="menu-item has-children" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" [class.expanded]="isUsersExpanded">
+          <a href="#" class="menu-link"
+             (click)="toggleUsersMenu(); $event.preventDefault()"
+             role="button"
+             [attr.aria-expanded]="isUsersExpanded">
+            <span class="material-symbols-rounded">groups</span>
+            <span class="menu-label">Utilisateurs</span>
+            <span class="material-symbols-rounded arrow-icon">
+      {{ isUsersExpanded ? 'expand_less' : 'expand_more' }}
+    </span>
+          </a>
+
+          <ul class="submenu" *ngIf="isUsersExpanded">
+            <li class="submenu-item" routerLinkActive="active">
+              <a routerLink="/admin/utilisateurs/clients" class="submenu-link" data-label="Clients">
+                <span class="material-symbols-rounded">person</span>
+                <span>Clients</span>
+              </a>
+            </li>
+            <li class="submenu-item" routerLinkActive="active">
+              <a routerLink="/admin/utilisateurs/guides" class="submenu-link" data-label="Guides">
+                <span class="material-symbols-rounded">person_outline</span>
+                <span>Guides</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+
+        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a role="menuitem" routerLink="/admin/circuits" class="menu-link" tabindex="0">
+            <span class="material-symbols-rounded">travel_explore</span>
+            <span class="menu-label">Circuits</span>
+          </a>
+        </li>
+
+        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a role="menuitem" routerLink="/admin/statistiques" class="menu-link" tabindex="0">
+            <span class="material-symbols-rounded">analytics</span>
+            <span class="menu-label">Statistiques</span>
+          </a>
+        </li>
+
+        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a role="menuitem" routerLink="/admin/suggestions" class="menu-link" tabindex="0">
+            <span class="material-symbols-rounded">lightbulb</span>
+            <span class="menu-label">Suggestions IA</span>
+          </a>
+        </li>
+
+        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a role="menuitem" routerLink="/admin/avis" class="menu-link" tabindex="0">
+            <span class="material-symbols-rounded">rate_review</span>
+            <span class="menu-label">Avis Clients</span>
+          </a>
+        </li>
+
+        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a role="menuitem" routerLink="/admin/favoris" class="menu-link" tabindex="0">
+            <span class="material-symbols-rounded">star</span>
+            <span class="menu-label">Favoris</span>
+          </a>
+        </li>
+
+        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a role="menuitem" routerLink="/admin/historique" class="menu-link" tabindex="0">
+            <span class="material-symbols-rounded">history</span>
+            <span class="menu-label">Historique</span>
+          </a>
+        </li>
+
+        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a role="menuitem" class="menu-link" (click)="logout()" tabindex="0">
+            <span class="material-symbols-rounded">logout</span>
+            <span class="menu-label">Déconnexion</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button (click)="toggleTheme()" class="theme-toggle">
+          <div class="theme-toggle-left">
+            <span class="theme-icon material-symbols-rounded">{{ isDarkTheme ? 'light_mode' : 'dark_mode' }}</span>
+            <span class="theme-text">Mode Sombre</span>
+          </div>
+          <div class="theme-toggle-track">
+            <div class="theme-toggle-indicator" [class.active]="isDarkTheme"></div>
+          </div>
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- Contenu principal -->
+    <main class="main-content" role="main" tabindex="0">
+      <ng-content></ng-content>
+    </main>
+  </div>
+</div>

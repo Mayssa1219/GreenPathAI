@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import {LoaderService} from './Services/LoadService';
 import {CommonModule, NgIf} from '@angular/common';
 import {LoadingComponent} from './loading/loading';
+import {Chart} from 'chart.js';
 
 @Component({
   selector: 'app-root',

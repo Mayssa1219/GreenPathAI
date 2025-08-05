@@ -1,11 +1,6 @@
-import { Injectable } from '@angular/core';
 import {
-  HttpInterceptor,
-  HttpRequest,
-  HttpHandler,
-  HttpEvent, HttpInterceptorFn
+  HttpInterceptorFn
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
 
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {

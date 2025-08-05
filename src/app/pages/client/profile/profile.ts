@@ -94,23 +94,33 @@ export class Profile implements OnInit {
     }
   }
   updateProfile(): void {
-    const updatedClient = {
-      username: this.client.fullname,
-      email: this.client.email,
-      location: this.client.location,
-      // autres champs modifiables
-    };
-
-    if (this.client && this.client.id != null) {
-      this.clientService.updateClient(this.client.id, updatedClient).subscribe({
-        next: () => alert('Profil mis à jour avec succès.'),
-        error: () => alert('Erreur lors de la mise à jour du profil.')
-      });
-    } else {
+    if (!this.client || this.client.id == null) {
       console.error("Impossible de mettre à jour : client.id est indéfini.");
       alert("Une erreur est survenue, veuillez réessayer plus tard.");
-    }}
+      return;
+    }
 
+    const updatedClient: Partial<Client> = {
+      fullname: this.client.fullname?.trim() || '',
+      email: this.client.email?.trim() || '',
+      location: this.client.location?.trim() || '',
+      // autres champs modifiables à ajouter ici
+    };
+
+    this.clientService.updateClient(this.client.id, updatedClient).subscribe({
+      next: (updated) => {
+        alert('Profil mis à jour avec succès.');
+        if (updated) {
+          this.client = { ...this.client, ...updated };
+          this.photoUrl = updated.photoUrl ?? this.photoUrl;  // si photoUrl est null/undefined, garde l'actuel
+        }
+      },
+      error: (err) => {
+        console.error('Erreur lors de la mise à jour du profil :', err);
+        alert('Erreur lors de la mise à jour du profil.');
+      }
+    });
+  }
   supprimerCompte(): void {
     if (confirm("Êtes-vous sûr de vouloir supprimer votre compte ?")) {
       this.clientService.deleteClient().subscribe({
