@@ -1,1 +1,56 @@
-<p>avis works!</p>
+<app-sidebar-header>
+<div class="p-6 bg-gray-50 min-h-screen">
+  <div class="admin-avis-container">
+    <h1 class="page-title">📊 Gestion des Avis</h1>
+
+    <!-- Barre de recherche -->
+    <div class="search-container">
+      <input type="text" placeholder="🔍 Rechercher un avis..."
+             [(ngModel)]="searchTerm" (input)="filterAvis()">
+    </div>
+
+    <!-- Loader -->
+    <div *ngIf="loading" class="loader">Chargement...</div>
+
+    <!-- Tableau -->
+    <div class="table-wrapper" *ngIf="!loading && filteredAvis.length > 0">
+      <table class="modern-table">
+        <thead>
+        <tr>
+          <th>Client</th>
+          <th>Circuit</th>
+          <th>Note</th>
+          <th>Commentaire</th>
+          <th>Date</th>
+          <th class="text-center">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let avis of filteredAvis">
+          <td>{{ avis.client }}</td>
+          <td>{{ avis.circuit }}</td>
+          <td>
+            <span class="badge" [class.green]="avis.note >=4"
+                  [class.yellow]="avis.note === 3"
+                  [class.red]="avis.note <=2">
+              {{ avis.note }}/5
+            </span>
+          </td>
+          <td>{{ avis.commentaire }}</td>
+          <td>{{ avis.dateAvis | date }}</td>
+          <td class="text-center">
+            <button class="btn btn-danger" (click)="deleteAvis(avis.id)">🗑 Supprimer</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Aucun avis -->
+    <div *ngIf="!loading && filteredAvis.length === 0" class="empty-state">
+      Aucun avis trouvé.
+    </div>
+  </div>
+
+</div>
+</app-sidebar-header>

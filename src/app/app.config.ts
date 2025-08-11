@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import {provideRouter, withInMemoryScrolling} from '@angular/router';
 import { routes } from './app.routes';
 import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptors} from '@angular/common/http';
 import {authInterceptor} from './Interceptor/AuthInterceptor';
@@ -9,6 +9,13 @@ import {ToastrModule} from 'ngx-toastr';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideAnimations(),
+    provideRouter(
+      routes,
+      withInMemoryScrolling({
+        scrollPositionRestoration: 'enabled',
+        anchorScrolling: 'enabled',
+      })
+    ),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideHttpClient(),
     provideBrowserGlobalErrorListeners(),

@@ -1,1 +1,46 @@
-<p>historiques works!</p>
+<app-sidebar-header>
+  <div class="historique-container">
+    <h2>📜 Historique des clients</h2>
+
+    <div class="search-box">
+      <input
+        type="text"
+        aria-label="Rechercher dans l’historique"
+        placeholder="🔍 Rechercher dans l’historique..."
+        [ngModel]="searchTerm"
+        (ngModelChange)="onSearchTermChange($event)"
+      />
+    </div>
+
+    <div *ngIf="loading" class="loading" role="status" aria-live="polite">Chargement...</div>
+    <div *ngIf="!loading && filteredHistoriques.length === 0" class="no-data">
+      Aucun historique trouvé.
+    </div>
+
+    <table
+      class="historique-table"
+      *ngIf="!loading && filteredHistoriques.length > 0"
+      aria-describedby="historique-desc"
+    >
+      <caption id="historique-desc" class="visually-hidden">
+        Liste des historiques d’activités clients avec date, type et description
+      </caption>
+      <thead>
+      <tr>
+        <th>Date</th>
+        <th>Client</th>
+        <th>Type d'activité</th>
+        <th>Description</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let h of filteredHistoriques">
+        <td>{{ h.dateFormatted }}</td> <!-- date déjà formatée en backend -->
+        <td>{{ h.clientFullName ? h.clientFullName : '— Inconnu —' }}</td>
+        <td><span class="badge">{{ h.typeActivite }}</span></td>
+        <td>{{ h.description }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</app-sidebar-header>

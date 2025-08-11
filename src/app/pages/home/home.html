@@ -48,49 +48,6 @@
     <p class="hero-subtitle">
       GreenPathAI, l’IA qui vous guide vers des circuits locaux, authentiques et écoresponsables, adaptés à vos envies.
     </p>
-    <!-- ... searchbar et autres éléments ... -->
-  </div>
-
-  <!-- Bulle flottante -->
-  <div class="hero-chat-bubble" (click)="openChat()">
-    <span>Hi! What can I do for you?</span>
-    <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Avatar utilisateur" class="hero-avatar">
-  </div>
-
-  <!-- Fenêtre du chat -->
-  <div class="chat-popup" *ngIf="isChatOpen">
-    <div class="chat-header">
-      <div class="chat-agent-info">
-        <img src="https://randomuser.me/api/portraits/men/12.jpg" alt="Agent" class="chat-agent-avatar">
-        <div>
-          <div class="chat-agent-name">Jordano Fring</div>
-          <div class="chat-agent-role">Sales Guru</div>
-        </div>
-        <span class="chat-status chat-online"></span>
-      </div>
-      <button class="chat-close" (click)="closeChat()">&#10005;</button>
-    </div>
-    <div class="chat-user-card">
-      <div class="chat-user-icon"><span class="fa fa-user"></span></div>
-      <div>
-        <div><b>Name:</b> Mayssa Jrad</div>
-        <div><b>E-mail:</b> mayssajrad2002&#64;gmail.com</div>
-      </div>
-    </div>
-    <div class="chat-messages">
-      <div class="chat-message chat-message-user">
-        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="User" class="chat-message-avatar">
-        <span>Hello!</span>
-      </div>
-      <div class="chat-transfer">You have been transferred to: Jordano Fring.</div>
-    </div>
-    <form class="chat-input-row">
-      <input type="text" placeholder="Write a message..." />
-      <button type="submit"><span class="fa fa-paper-plane"></span></button>
-      <button type="button"><span class="fa fa-smile"></span></button>
-      <button type="button"><span class="fa fa-paperclip"></span></button>
-    </form>
-    <div class="chat-powered">Powered by <span style="color:#fa541c;font-weight:bold">LiveChat</span></div>
   </div>
 </section>
     <!-- 3. CIRCUITS PHARES -->
@@ -100,11 +57,11 @@
     <button class="carousel-btn left" aria-label="Précédent" (click)="prev()" [disabled]="currentIndex === 0">&#10094;</button>
     <div class="carousel-track" #carouselTrack>
       <div class="circuit-card" *ngFor="let circuit of circuits">
-        <img [src]="circuit.image" [alt]="circuit.alt" (load)="updateCarousel()" />
+        <img [src]="circuit.photoUrl"  (load)="updateCarousel()" />
         <div class="circuit-content">
-          <h3>{{ circuit.title }}</h3>
+          <h3>{{ circuit.titre }}</h3>
           <p>{{ circuit.description }}</p>
-          <a href="#" class="btn btn-secondary">Voir le circuit</a>
+          <a href="#" (click)="onVoirCircuitClick(); $event.preventDefault()" class="btn btn-secondary">Voir le circuit</a>
         </div>
       </div>
     </div>
@@ -163,34 +120,16 @@
   </div>
 </section>
 <!-- 5. TÉMOIGNAGES -->
-<section id="testimonials" class="testimonials">
+<section id="testimonials" class="testimonials" *ngIf="avis.length > 0">
   <h2>Témoignages</h2>
   <div class="testimonials-list">
-    <div class="testimonial-card">
+    <div class="testimonial-card" *ngFor="let avis of avis">
       <div class="testimonial-text">
-        "Un voyage qui a du sens, des panoramas à couper le souffle, et la certitude d’agir pour la planète !"
+        "{{ avis.commentaire }}"
       </div>
       <div class="testimonial-author">
-        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Marie" loading="lazy" />
-        <span>Marie, exploratrice nature</span>
-      </div>
-    </div>
-    <div class="testimonial-card">
-      <div class="testimonial-text">
-        "GreenPathAI propose des expériences vraiment différentes, loin des sentiers battus, avec un vrai impact positif."
-      </div>
-      <div class="testimonial-author">
-        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Julien" loading="lazy" />
-        <span>Julien, voyageur local</span>
-      </div>
-    </div>
-    <div class="testimonial-card">
-      <div class="testimonial-text">
-        "L’IA m’a aidée à concevoir un circuit respectueux de la nature, adapté à toute la famille. Top !"
-      </div>
-      <div class="testimonial-author">
-        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Sarah" loading="lazy" />
-        <span>Sarah, famille engagée</span>
+        <img [src]="avis.clientPhotoUrl" alt="{{ avis.clientName }}" loading="lazy" />
+        <span>{{ avis.clientName }}</span>
       </div>
     </div>
   </div>
@@ -247,7 +186,7 @@
   <h2>L’équipe engagée</h2>
   <div class="team-list">
     <div class="team-member">
-      <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Mayssa Jrad" loading="lazy"/>
+      <img src="https://res.cloudinary.com/ds9vfy7vv/image/upload/v1754247416/circuits/bg3nnfuymgudru8kihhm.jpg" alt="Mayssa Jrad" loading="lazy"/>
       <h3>Mayssa Jrad</h3>
       <p>Fondatrice</p>
     </div>

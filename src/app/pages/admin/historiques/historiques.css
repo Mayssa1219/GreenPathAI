@@ -1,0 +1,73 @@
+.historique-container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+h2 {
+  text-align: center;
+  color: #2c3e50;
+  font-weight: bold;
+}
+
+.search-box {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.search-box input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 15px;
+  border: 2px solid #ddd;
+  border-radius: 25px;
+  outline: none;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.search-box input:focus {
+  border-color: #2e7d32;
+  box-shadow: 0 0 5px rgba(73, 239, 81, 0.32);
+}
+
+.loading, .no-data {
+  text-align: center;
+  padding: 15px;
+  font-style: italic;
+  color: #888;
+}
+
+.historique-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.historique-table th, .historique-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.historique-table th {
+  background: #f8f9fa;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.historique-table tr:hover {
+  background: #f6faff;
+}
+
+.badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 12px;
+  background: #2e7d32;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}

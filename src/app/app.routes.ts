@@ -14,6 +14,10 @@ import {Login} from './pages/admin/login/login';
 import {AdminAuthGuard} from './guards/AdminAuthGuard';
 import {ClientsComponent} from './pages/admin/clients/clients';
 import {ForgetPassword} from './pages/admin/forget-password/forget-password';
+import {CircuitsComponent} from './pages/admin/circuits/circuits';
+import {AvisComponent} from './pages/admin/avis/avis';
+import {HistoriquesComponent} from './pages/admin/historiques/historiques';
+import {SuggestionsIAComponent} from './pages/admin/suggestions-ia/suggestions-ia';
 
 
 export const routes: Routes = [
@@ -28,14 +32,26 @@ export const routes: Routes = [
   {
     path: 'admin-dashboard',
     component: Dashboard, canActivate: [DashboardDelayGuard]},
+  {
+    path: 'admin-suggestions',
+    component: SuggestionsIAComponent, canActivate: [DashboardDelayGuard]},
   { path: 'forgot-password-admin', component: ForgetPassword },
 
   {
     path: 'admin-clients',
     component: ClientsComponent, canActivate: [DashboardDelayGuard]},
   {
+    path: 'admin-circuits',
+    component: CircuitsComponent, canActivate: [DashboardDelayGuard]},
+  {
+    path: 'admin-avis',
+    component: AvisComponent, canActivate: [DashboardDelayGuard]},
+  {
+    path: 'admin-historiques',
+    component: HistoriquesComponent, canActivate: [DashboardDelayGuard]},
+  {
     path: 'dashboard',
-    component: DashboardComponent, canActivate: [AuthGuard, RoleStatutGuard],
+    component: DashboardComponent, canActivate: [AuthGuard, RoleStatutGuard,DashboardDelayGuard],
     data: { roles: ['client'] } },
   {
     path: 'profile',

@@ -13,4 +13,6 @@ export interface Circuit {
   guide?: { id: number; nom?: string,photoUrl?:string};
   proposePar?: { id: number; nom?: string };
   consignes?: string;
+  moyenneAvis?: number;  // note moyenne calculée côté frontend
+
 }

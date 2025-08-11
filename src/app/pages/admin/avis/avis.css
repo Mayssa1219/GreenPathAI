@@ -1,0 +1,104 @@
+/* Conteneur principal */
+.admin-avis-container {
+  padding: 2rem;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Titre principal */
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #14532d;
+  margin-bottom: 1.5rem;
+}
+
+/* Barre de recherche */
+.search-container {
+  margin-bottom: 1rem;
+}
+.search-container input {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+.search-container input:focus {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.3);
+  outline: none;
+}
+
+/* Loader */
+.loader {
+  text-align: center;
+  padding: 1rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Table responsive */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+.modern-table th {
+  background:  #2e7d32;
+  color: white;
+  text-align: left;
+  padding: 0.8rem;
+  font-weight: 600;
+}
+.modern-table td {
+  padding: 0.8rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.modern-table tbody tr:hover {
+  background-color: #f0fdf4;
+  transition: background 0.2s ease;
+}
+
+/* Badges de note */
+.badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+}
+.badge.green { background-color: #16a34a; }
+.badge.yellow { background-color: #facc15; color: #14532d; }
+.badge.red { background-color: #dc2626; }
+
+/* Boutons */
+.btn {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s ease;
+}
+.btn-danger {
+  background-color: #dc2626;
+  color: white;
+}
+.btn-danger:hover {
+  background-color: #b91c1c;
+}
+
+/* Etat vide */
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+  font-size: 1.1rem;
+}

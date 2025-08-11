@@ -1,1 +1,190 @@
-<p>circuits works!</p>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+
+<app-sidebar-header>
+  <div class="container">
+
+    <header class="header">
+      <h1>📍 Gestion des Circuits</h1>
+      <div class="actions">
+        <input
+          type="text"
+          placeholder="🔍 Rechercher par mot-clé..."
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          class="search-input"
+        />
+        <button (click)="refresh()" class="btn btn-primary">
+          <i class="fas fa-sync-alt"></i> Actualiser
+        </button>
+        <button (click)="showAddCircuitPopup = true" class="btn btn-success">
+          <i class="fas fa-plus-circle"></i> Ajouter un circuit
+        </button>
+      </div>
+
+    </header>
+
+    <section class="filters">
+      <label>
+        Statut :
+        <select [(ngModel)]="filterStatus" (change)="onSearch()">
+          <option value="">Tous</option>
+          <option value="VALIDATED">✅ Validés</option>
+          <option value="PROPOSE">📝 Proposés</option>
+          <option value="SUGGESTED">💡 Suggérés</option>
+        </select>
+      </label>
+
+      <label>
+        Durée min :
+        <input type="number" [(ngModel)]="minDuree" (input)="onSearch()" min="0" />
+      </label>
+
+      <label>
+        Durée max :
+        <input type="number" [(ngModel)]="maxDuree" (input)="onSearch()" min="0" />
+      </label>
+    </section>
+
+    <section *ngIf="circuits.length === 0" class="empty-state">
+      <p>Aucun circuit trouvé.</p>
+    </section>
+
+    <section class="cards">
+      <div *ngFor="let circuit of circuits" class="card">
+        <img *ngIf="circuit.photoUrl" [src]="circuit.photoUrl" class="card-img" />
+
+        <div class="card-content">
+          <h2>{{ circuit.titre }}</h2>
+          <p>{{ circuit.description }}</p>
+          <p><strong>Durée :</strong> {{ circuit.duree }} heures</p>
+          <p><strong>Status :</strong> {{ circuit.status }}</p>
+          <p>
+            <strong>Tags :</strong>
+            <span *ngFor="let tag of circuit.tags; let last = last">
+              #{{ tag }}<span *ngIf="!last">, </span>
+            </span>
+          </p>
+        </div>
+
+        <div class="card-actions">
+          <button
+            *ngIf="circuit.status === 'PROPOSE'"
+            (click)="validateCircuit(circuit.id)"
+            class="btn btn-success"
+            title="Valider le circuit">
+            <i class="fas fa-check-circle"></i>
+          </button>
+
+          <button
+            *ngIf="circuit.status === 'PROPOSE'"
+            (click)="rejectCircuit(circuit.id)"
+            class="btn btn-danger"
+            title="Rejeter le circuit">
+            <i class="fas fa-times-circle"></i>
+          </button>
+
+          <div class="ratings-container">
+            <div class="ratings-container" style="flex-direction: column; gap: 4px;">
+              <div class="rating" [title]="'Score écoresponsabilité: ' + (circuit.niveauEcoresponsabilite || 0) + '/5'">
+                ♻️
+                <ng-container *ngFor="let i of [1,2,3,4,5]">
+                  <i class="fa-star"
+                     [ngClass]="{'fas': i <= (circuit.niveauEcoresponsabilite || 0), 'far': i > (circuit.niveauEcoresponsabilite || 0)}"></i>
+                </ng-container>
+              </div>
+
+              <div class="rating" [title]="'Note clients : ' + (circuit.moyenneAvis || 0) + '/5'">
+                ❤️
+                <ng-container *ngFor="let i of [1,2,3,4,5]">
+                  <i class="fa-heart"
+                     [ngClass]="{'fas': i <= (circuit.moyenneAvis || 0), 'far': i > (circuit.moyenneAvis || 0)}"></i>
+                </ng-container>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <!-- Popup Ajouter Circuit -->
+      <div class="modal-backdrop" *ngIf="showAddCircuitPopup">
+        <div class="modal">
+          <h3>Ajouter un nouveau circuit</h3>
+
+          <form (ngSubmit)="ajouterCircuit()" #addCircuitForm="ngForm">
+            <input  id="photo"
+                    name="photo"
+                    required
+                    [(ngModel)]="nouveauCircuit.photoUrl" type="file" (change)="onFileSelected($event)" accept="image/*" />
+
+            <label for="titre">Titre</label>
+            <input
+              id="titre"
+              name="titre"
+              type="text"
+              required
+              [(ngModel)]="nouveauCircuit.titre"
+            />
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              required
+              [(ngModel)]="nouveauCircuit.description"
+            ></textarea>
+            <label for="tags">etapes (séparés par des virgules)</label>
+            <input
+              id="etapes"
+              name="etapes"
+              type="text"
+              [(ngModel)]="nouveauCircuit.etapes"
+              placeholder="etape1,etape2,etape3"
+            />
+            <label for="duree">Durée (heures)</label>
+            <input
+              id="duree"
+              name="duree"
+              type="number"
+              min="1"
+              required
+              [(ngModel)]="nouveauCircuit.duree"
+            />
+
+            <label for="tags">Tags (séparés par des virgules)</label>
+            <input
+              id="tags"
+              name="tags"
+              type="text"
+              [(ngModel)]="nouveauCircuit.tags"
+              placeholder="nature,sport,patrimoine"
+            />
+
+            <div class="modal-actions">
+              <button type="submit" [disabled]="addCircuitForm.invalid" class="btn btn-success">Ajouter</button>
+              <button type="button" (click)="closePopup()" class="btn btn-secondary">Annuler</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pagination -->
+    <nav class="pagination" *ngIf="totalPages > 1">
+      <button
+        class="btn"
+        [disabled]="currentPage === 1"
+        (click)="changePage(currentPage - 1)">
+        ← Précédent
+      </button>
+
+      <span>Page {{ currentPage }} / {{ totalPages }}</span>
+
+      <button
+        class="btn"
+        [disabled]="currentPage === totalPages"
+        (click)="changePage(currentPage + 1)">
+        Suivant →
+      </button>
+    </nav>
+
+  </div>
+</app-sidebar-header>

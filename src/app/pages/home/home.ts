@@ -2,14 +2,8 @@ import {Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, OnInit} from
 import { NgFor, NgIf } from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {TawkService} from '../../Services/TawkService';
- // Crée ce service comme montré précédemment
-
-interface Circuit {
-  image: string;
-  alt: string;
-  title: string;
-  description: string;
-}
+import {Avis,Circuit, HomeService} from '../../Services/HomeService';
+import {AuthService} from '../../Services/authService';
 
 @Component({
   selector: 'app-home',
@@ -20,50 +14,55 @@ interface Circuit {
 })
 export class HomeComponent implements AfterViewInit, OnDestroy,OnInit {
 
+  circuits: Circuit[] = [];
+  avis: Avis[] = [];
+  loadingCircuits = false;
+  loadingAvis = false;
 
+  constructor(private authService:AuthService,private homeService: HomeService,private tawk: TawkService) {}
 
-  circuits: Circuit[] = [
-    {
-      image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
-      alt: 'Forêt et lac',
-      title: 'Évasion Nature & Forêts',
-      description: 'Parcours immersif au cœur des forêts et lacs, rencontres locales, hébergements éco-certifiés.'
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1454023492550-5696f8ff10e1?auto=format&fit=crop&w=600&q=80',
-      alt: 'Village local',
-      title: 'Villages & Traditions',
-      description: 'Immersion artisanale, gastronomie locale, accueil chez l’habitant et balades à vélo.'
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80',
-      alt: 'Découverte bord de mer',
-      title: 'Éco-découverte littorale',
-      description: 'Exploration côtière, activités nautiques douces, nuits en éco-lodge face à la mer.'
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1465101162946-4377e57745c3?auto=format&fit=crop&w=600&q=80',
-      alt: 'Cascade turquoise',
-      title: 'Randonnée & Cascade',
-      description: 'Itinéraire sportif, cascades secrètes, bivouac écologique sous les étoiles.'
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80',
-      alt: 'Montagnes et lacs',
-      title: 'Montagnes & Terroirs',
-      description: 'Découverte des sommets, rencontres de producteurs locaux, gastronomie bio.'
+  ngOnInit(): void {
+    this.loadRecentCircuits();
+    this.loadRecentAvis();
+    this.tawk.load();
+
+  }
+  onVoirCircuitClick() {
+    if (!this.authService.isLoggedIn) {
+      alert('Connectez-vous pour voir ce circuit.');
+      // ici tu peux aussi router vers /login si tu veux
+    } else {
+      alert('Accès au circuit autorisé !');
+      // navigation vers le détail circuit par exemple
     }
-  ];
+  }
+  loadRecentCircuits(): void {
+    this.loadingCircuits = true;
+    this.homeService.getRecentCircuits().subscribe({
+      next: (data) => {
+        this.circuits = data;
+        this.loadingCircuits = false;
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des circuits', err);
+        this.loadingCircuits = false;
+      },
+    });
+  }
 
-  originalCircuits: Circuit[] = JSON.parse(JSON.stringify(this.circuits)); // Pour reset sur changement de langue
-
-  selectedLang = 'fr';
-  supportedLangs = [
-    { code: 'fr', label: 'Français' },
-    { code: 'en', label: 'English' },
-    { code: 'es', label: 'Español' },
-    { code: 'de', label: 'Deutsch' }
-  ];
+  loadRecentAvis(): void {
+    this.loadingAvis = true;
+    this.homeService.getRecentAvis().subscribe({
+      next: (data) => {
+        this.avis = data;
+        this.loadingAvis = false;
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des avis', err);
+        this.loadingAvis = false;
+      },
+    });
+  }
 
   @ViewChild('carouselTrack', { static: true }) carouselTrack!: ElementRef<HTMLDivElement>;
   currentIndex = 0;
@@ -74,11 +73,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy,OnInit {
     return Math.max(0, this.circuits.length - this.visibleCount);
   }
 
-  constructor(private tawk: TawkService) {}
 
-  ngOnInit(): void {
-    this.tawk.load();
-  }
 
   ngAfterViewInit() {
     this.updateVisibleCount();
@@ -151,7 +146,20 @@ export class HomeComponent implements AfterViewInit, OnDestroy,OnInit {
   }
 
   // Fun fact values in order: Clients, Circuits, Partenaires, Questions
-  funFactTargets = [623744, 112, 594, 8711];
+  funFactTargets: number[] = [0, 0, 0, 0]; // valeurs initiales
+  loadFunFacts() {
+    this.homeService.getFunFacts().subscribe({
+      next: (data) => {
+        this.funFactTargets = [
+          data.clientsSatisfaits,
+          data.circuitsExceptionnels,
+          data.partenaires];
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des fun facts', err);
+      }
+    });
+  }
 
   @ViewChild('funFactsContainer', { static: true }) funFactsContainer!: ElementRef<HTMLDivElement>;
   private funFactObserver!: IntersectionObserver;

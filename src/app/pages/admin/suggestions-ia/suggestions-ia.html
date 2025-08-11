@@ -1,1 +1,107 @@
-<p>suggestions-ia works!</p>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+<app-sidebar-header>
+  <div class="container">
+
+    <header class="header">
+      <h1>Suggestions IA</h1>
+      <div>
+        <button class="btn-add" (click)="openCreateModal()" [disabled]="loading" title="Ajouter une suggestion">
+          <i class="bi bi-plus-circle"></i> Ajouter
+        </button>
+        <button class="btn-refresh" (click)="loadSuggestions()" [disabled]="loading" title="Rafraîchir">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+      </div>
+    </header>
+
+    <section *ngIf="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Chargement en cours...</p>
+    </section>
+
+    <section *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </section>
+
+    <section *ngIf="!loading && suggestions.length === 0" class="empty-state">
+      <i class="bi bi-inbox"></i>
+      <p>Aucune suggestion disponible.</p>
+    </section>
+
+    <section *ngIf="!loading && suggestions.length > 0" class="table-wrapper">
+      <table>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Client</th>
+          <th>Circuit</th>
+          <th>Score</th>
+          <th>Date</th>
+          <th class="actions-col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let suggestion of suggestions">
+          <td><span class="badge">{{ suggestion.id }}</span></td>
+          <td>{{ suggestion.client?.nom || ('Client #' + suggestion.client?.id) }}</td>
+          <td>{{ suggestion.circuit?.titre || ('Circuit #' + suggestion.circuit?.id) }}</td>
+          <td>{{ suggestion.score | number:'1.2-2' }}</td>
+          <td>{{ suggestion.date | date:'dd MMM yyyy, HH:mm' }}</td>
+          <td class="actions-col">
+            <button class="btn-edit" (click)="openEditModal(suggestion)" title="Modifier">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="btn-delete" (click)="deleteSuggestion(suggestion.id)" title="Supprimer">
+              <i class="bi bi-trash3"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Modal -->
+    <div class="modal-backdrop" *ngIf="showModal">
+      <div class="modal">
+        <h2>{{ editingSuggestion?.id ? 'Modifier la suggestion' : 'Ajouter une suggestion' }}</h2>
+
+        <form #form="ngForm" (ngSubmit)="onSubmit(form)" novalidate>
+
+          <label for="clientId">Client ID *</label>
+          <input id="clientId" name="clientId" type="number" required
+                 [(ngModel)]="formModel.client!.id" />
+
+          <label for="clientNom">Client Nom</label>
+          <input id="clientNom" name="clientNom" type="text"
+                 [(ngModel)]="formModel.client!.nom" />
+
+          <label for="circuitId">Circuit ID *</label>
+          <input id="circuitId" name="circuitId" type="number" required
+                 [(ngModel)]="formModel.circuit!.id" />
+
+          <label for="circuitTitre">Circuit Titre</label>
+          <input id="circuitTitre" name="circuitTitre" type="text"
+                 [(ngModel)]="formModel.circuit!.titre" />
+
+          <label for="score">Score (0 à 1)</label>
+          <input id="score" name="score" type="number" min="0" max="1" step="0.01"
+                 [(ngModel)]="formModel.score" />
+
+          <label for="date">Date & Heure</label>
+          <input id="date" name="date" type="datetime-local"
+                 [(ngModel)]="formModel.date" required />
+
+          <div class="modal-buttons">
+            <button type="submit" [disabled]="form.invalid" class="btn-save">
+              {{ editingSuggestion?.id ? 'Enregistrer' : 'Créer' }}
+            </button>
+            <button type="button" class="btn-cancel" (click)="closeModal()">Annuler</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+</app-sidebar-header>

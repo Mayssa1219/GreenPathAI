@@ -85,7 +85,7 @@
 
           <ul class="submenu" *ngIf="isUsersExpanded">
             <li class="submenu-item" routerLinkActive="active">
-              <a routerLink="/admin/utilisateurs/clients" class="submenu-link" data-label="Clients">
+              <a routerLink="/admin-clients" class="submenu-link" data-label="Clients">
                 <span class="material-symbols-rounded">person</span>
                 <span>Clients</span>
               </a>
@@ -101,44 +101,32 @@
 
 
         <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <a role="menuitem" routerLink="/admin/circuits" class="menu-link" tabindex="0">
+          <a role="menuitem" routerLink="/admin-circuits" class="menu-link" tabindex="0">
             <span class="material-symbols-rounded">travel_explore</span>
             <span class="menu-label">Circuits</span>
           </a>
         </li>
 
-        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <a role="menuitem" routerLink="/admin/statistiques" class="menu-link" tabindex="0">
-            <span class="material-symbols-rounded">analytics</span>
-            <span class="menu-label">Statistiques</span>
-          </a>
-        </li>
 
         <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <a role="menuitem" routerLink="/admin/suggestions" class="menu-link" tabindex="0">
+          <a role="menuitem" routerLink="/admin-suggestions" class="menu-link" tabindex="0">
             <span class="material-symbols-rounded">lightbulb</span>
             <span class="menu-label">Suggestions IA</span>
           </a>
         </li>
 
         <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <a role="menuitem" routerLink="/admin/avis" class="menu-link" tabindex="0">
+          <a role="menuitem" routerLink="/admin-avis" class="menu-link" tabindex="0">
             <span class="material-symbols-rounded">rate_review</span>
             <span class="menu-label">Avis Clients</span>
           </a>
         </li>
 
-        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <a role="menuitem" routerLink="/admin/favoris" class="menu-link" tabindex="0">
-            <span class="material-symbols-rounded">star</span>
-            <span class="menu-label">Favoris</span>
-          </a>
-        </li>
 
         <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <a role="menuitem" routerLink="/admin/historique" class="menu-link" tabindex="0">
+          <a role="menuitem" routerLink="/admin-historiques" class="menu-link" tabindex="0">
             <span class="material-symbols-rounded">history</span>
-            <span class="menu-label">Historique</span>
+            <span class="menu-label">Historiques</span>
           </a>
         </li>
 
